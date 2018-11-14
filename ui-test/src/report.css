@@ -1,0 +1,42 @@
+.tReport body {
+    margin: 0;
+    padding: 0;
+    font-size: 9pt;
+    background: white;
+}
+.topBar{
+  display: flex;
+  flex-flow: row;
+  background-color: lightblue;
+
+}
+.topBar button{
+  margin-left: 10%;
+  float: left;
+}
+
+.topBar h2{
+  margin-left: 30%;
+  padding: 10%, 10%;
+  text-align: center;
+}
+
+.searchReports input{
+  width:50%;
+}
+
+body{
+
+}
+
+.muibutton{
+  padding: 10%;
+}
+
+.report-view textarea{
+  margin-top: 5%;
+}
+
+.MuiTouchRipple-root-105{
+  margin-left: 1%;
+}
