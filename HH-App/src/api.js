@@ -65,8 +65,7 @@ const getReports = () => { // pass orgUnit
     headers,
   })
   .catch(error => error)
-  .then(response => 
-    response.json());
+  .then(response => response.json());
 };
 
 
@@ -119,6 +118,16 @@ const postEvent = event => {
   .then(response => response.json());
 };
 
+const getEntryFromDoctor = eventID => {
+  return fetch(`${dhis2.baseUrl}events/${eventID}`, {
+    method: 'GET',
+    credentials: 'include',
+    mode: 'cors',
+    headers,
+  })
+  .catch(error => error)
+  .then(response => response.json());
+}
 
 const getEvent = event => {
   return fetch(`${dhis2.baseUrl}events?orgUnit=DUDHgE5DECu`, {  //  Search for data element
@@ -139,6 +148,7 @@ export default {
   getReports,
   getEvent,
   postEvent,
+  getEntryFromDoctor,
   getTrackedEntityInstances,
 };
 

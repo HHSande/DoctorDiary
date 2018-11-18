@@ -25,6 +25,9 @@ class SearchBar extends Component{
 		//this.setInputState = this.setInputState.bind(this);
 		this.toggleWindowPortal = this.toggleWindowPortal.bind(this);
 		this.listItems = null;
+		this.getEvent = this.getEvent.bind(this);
+		this.orderDataValues = this.orderDataValues.bind(this);
+		this.lessThan7 = this.lessThan7.bind(this);
 	}
 
 	createEntry(name, time){
@@ -64,7 +67,7 @@ class SearchBar extends Component{
 	filter(value){
 		var sum = [];
 		for(var i = 0; i < this.state.dummyData.length; i++){
-			if(this.state.dummyData[i].doctor_name.startsWith(value)){
+			if(this.state.dummyData[i].storedBy.startsWith(value)){
 				//console.log(this.state.dummyData[i].doctor_name + " hadde " + value);
 				sum.push(this.state.dummyData[i]);
 			}
@@ -135,7 +138,54 @@ class SearchBar extends Component{
     //console.log("Etter: " + this.state.openWindow);
   }
 
+  getEvent(eventID){
+  	Api.getEntryFromDoctor(eventID).then(data => console.log(data));
+  }
 
+
+  orderDataValues(dataValues){
+  	/*
+  	console.log(dataValue);
+  	var ny = dataValues.sort(function(a, b){
+  		if (a.dataElement < b.dataElement){
+    				return -1;
+				}
+  				if (a.dataElement > b.dataElement){
+    				return 1;
+  				}
+  				return 0;
+  	});
+  	return ny;
+  	*/
+
+  	for(var i = 0; i < dataValues.length; i++){
+  		if(dataValues[i].dataElement === "zrZADVnTtMa"){
+  			console.log(dataValues[i].value);
+  			switch(parseInt(dataValues[i].value)){
+  				case 1:
+  					return "Approved";
+  					break;
+  				case 2: 
+  					return "Rejected";
+  					break;
+  				case 3:
+  					return "Pending";
+  					break;
+  				default:
+  					console.log("Skal ikke kommme hit");
+  					break;
+  			}
+  		}
+  	}
+
+  	console.log("Sanity check");
+
+  }
+
+  lessThan7(data){
+  	console.log(data);
+  	return data.dataValues.length === 7;
+  }
 
 	render(){
 			
@@ -143,13 +193,11 @@ class SearchBar extends Component{
 			if(this.state.curr.length > 0){
 				console.log("Hei")
 				//console.log("Kjører");
-				this.listItems = this.state.curr.map((fucker) => 
-					<li onClick={
-						//console.log("Trykket på liste elem " + this.state.openWindow);
-						this.toggleWindowPortal}>{fucker.storedBy + " " + fucker.dueDate}</li>
-
+				this.listItems = this.state.curr.filter(this.lessThan7).map((fucker) => 
+						<li onClick={() => 
+						this.getEvent(fucker.event)}>{fucker.storedBy + " " + fucker.dueDate + " " + this.orderDataValues(fucker.dataValues)}</li>
 				);
-				
+					
 			}
 
 
