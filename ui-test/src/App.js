@@ -13,7 +13,7 @@ class App extends Component {
     return (
       <div className="App">
         <div className="interfaceButtons">
-          <DHOReportview/>
+          <Oldreport/>
 
         </div>
       </div>
@@ -28,6 +28,6 @@ class App extends Component {
   Oldreport
   TodaysReport
   Previousreport
-
+   Må kjore $ npm install @material-ui/core i terminalen i mappen som det kjores fra.
 */
 export default App;

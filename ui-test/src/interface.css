@@ -32,6 +32,9 @@
   transform: translateY(4px);
 }
 
-.viewButtons body{
+.viewButtons{
+  background-color: #1d5288;
+}
+body{
   background-color: #1d5288;
 }

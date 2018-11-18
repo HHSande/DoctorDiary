@@ -1,12 +1,33 @@
 import './report.css';
 import React, { Component } from 'react';
 import ReactDOM from "react-dom";
-import { TextField, Input, MuiThemeProvider, AppBar, Button, Toolbar, Typography } from '@material-ui/core/';
+import { Paper, TextField, Input, MuiThemeProvider, AppBar, Button, Toolbar, Typography } from '@material-ui/core/';
+import { withStyles } from '@material-ui/core/styles';
+import PropTypes from 'prop-types';
 
+const styles = theme => ({
+  root: {
+    width: '80%',
+    margin:'0 auto',
+    marginTop: '1%',
+    overflowX: 'auto',
+  },
+  buttons: {
+    marginTop: '3%',
+    margin: '1 auto',
+    backgroundColor: '#3f51b5',
+    color: 'white',
+  },
+  textinput: {
+    marginTop:'2rem',
+    marginTop:'2rem',
+    margin:'0',
+  }
 
-
+});
 
 class Todaysreport extends React.Component{
+
   constructor(props){
     super(props)
     this.state = {
@@ -60,10 +81,9 @@ class Todaysreport extends React.Component{
     };
   }
   render(){
+    const { classes } = this.props;
     return(
       <div className="tReport" >
-        <body>
-
           <AppBar position="static" color="primary">
             <Toolbar>
               <Button color="inherit">Back</Button>
@@ -72,49 +92,28 @@ class Todaysreport extends React.Component{
               </Typography>
             </Toolbar>
           </AppBar>
+        <Paper className={classes.root}>
+          <form onSubmit={this.handleSubmit}>
+            <div>
+                <TextField type="text" value={this.state.patientType}  label="Types of patients:" className={classes.textinput} onChange={this.handlePatient}/>
+            </div>
+            <div>
+              <TextField type="text" value={this.state.equipmentUsed} label="Equipment used:"className={classes.textinput} onChange={this.handleEquipment}/>
+            </div>
+            <div>
+              <TextField multiline={true} type="text" value={this.state.problems} label="Challenges related to equipment or infrastructure:"
+             className={classes.textinput} rows={4} onChange={this.handleProblems}/>
+            </div>
 
-        <form onSubmit={this.handleSubmit}>
-          <div className="dateInput">
-            <label>
-              Date:
-              <TextField type="date" variant="outlined" value={this.state.date} onChange={this.handleDate} placeholder="Today's date..."/>
-            </label>
+          </form>
+          <div>
+            <Button className={classes.buttons} color="primary" value="Submit"/>
+            <Button className={classes.buttons} color="primary"> Save </Button>
           </div>
-          <div className="timeInput">
-            <label>
-              Time:
-              <input type="time" value={this.state.timeFrom} onChange={this.handleTimeFrom} placeholder="From.."/>
-              -
-              <input type="time" value={this.state.timeTo} onChange={this.handleTimeTo} placeholder="To.." />
-            </label>
-          </div>
-          <div className="typeInput">
-            <label>
-              Types of patients:
-              <input type="text" value={this.state.patientType} onChange={this.handlePatient}/>
-            </label>
-          </div>
-          <div className="equipmentInput">
-          <label>
-            Equipment used:
-            <input type="text" value={this.state.equipmentUsed} onChange={this.handleEquipment}/>
-          </label>
-          </div>
-          <div className="equipmentInput">
-          <label>
-            Challenges related to
-            <br></br>
-            equipment or infrastructure:
-            <input type="text" value={this.state.problems} onChange={this.handleProblems}/>
-          </label>
-          </div>
-        </form>
-        <input type="submit" value="Submit"/>
-        <button className="saveButton"> Heh </button>
-        </body>
+        </Paper>
       </div>
     );
   }
 }
 
-export default Todaysreport;
+export default withStyles(styles)(Todaysreport);

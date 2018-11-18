@@ -8,7 +8,6 @@ class Doctorsinterface extends React.Component{
   render(){
     return(
       <div className="viewButtons" >
-        <body>
           <h2>Doctor's interface</h2>
           <Button className="todayButton" variant="contained" color="primary">
             Todays report
@@ -16,7 +15,6 @@ class Doctorsinterface extends React.Component{
           <Button className="previousButton" variant="contained" color="secondary">
             Yesterdays report
           </Button>
-        </body>
       </div>
     );
   }

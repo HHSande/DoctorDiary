@@ -14,22 +14,18 @@ class Previousreports extends React.Component{
   render(){
     return(
       <div className="viewReportList" >
-        <body>
           <AppBar position="static" color="primary">
             <Toolbar>
               <Button color="inherit">Back</Button>
               <Typography id="headliner" variant="h6" color="inherit">
                 Previous Reports
               </Typography>
+              <TextField type="text" variant="outlined" placeholder="Search for report number..."/>
             </Toolbar>
           </AppBar>
-          <div className="searchReports">
-              <TextField type="text" variant="outlined" placeholder="Search for report number..."/>
-          </div>
           <div className="reportOverView">
             <TestTable reportList={this.state.reportList}/>
           </div>
-        </body>
       </div>
     );
   }

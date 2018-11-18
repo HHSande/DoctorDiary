@@ -45,10 +45,10 @@ const TestTable = props =>{
         <Table className={styles.table}>
           <TableHead>
             <TableRow>
-              <TableCell numeric>Submitted by</TableCell>
-              <TableCell date>Report number</TableCell>
-              <TableCell numeric>Date</TableCell>
+              <TableCell numeric>Report number</TableCell>
+              <TableCell>Date</TableCell>
               <TableCell numeric>Status</TableCell>
+              <TableCell numeric>Comment from health officer</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>

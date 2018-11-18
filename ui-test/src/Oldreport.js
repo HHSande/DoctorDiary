@@ -1,24 +1,51 @@
+import './report.css';
 import React, { Component } from 'react';
 import ReactDOM from "react-dom";
-
+import { Paper, TextField, Input, MuiThemeProvider, AppBar, Button, Toolbar, Typography } from '@material-ui/core/';
 import { withStyles } from '@material-ui/core/styles';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
-import Paper from '@material-ui/core/Paper';
+import PropTypes from 'prop-types';
 
-import { TextField, Input, MuiThemeProvider, AppBar, Button, Toolbar, Typography } from '@material-ui/core/';
+
+
+const styles = theme => ({
+  root: {
+    width: '80%',
+    margin:'0 auto',
+    marginTop: '1%',
+    overflowX: 'auto',
+  },
+  buttons: {
+    marginTop: '3%',
+    margin: '1 auto',
+    backgroundColor: '#3f51b5',
+    color: 'white',
+  },
+  textinput: {
+    marginTop:'2rem',
+    marginTop:'2rem',
+    margin:'0',
+    overflow: 'auto',
+  }
+
+});
 
 class Oldreport extends React.Component{
   constructor(props){
     super(props)
-
+    this.state = {
+      date:'',
+      timeFrom:'',
+      timeTo:'',
+      patientType:'',
+      equipmentUsed:'',
+      problems:'bare masse problemer her. bruker denne til å se hvordan multiline fungerer',
+      status:''
+      };
     };
 
 
   render(){
+    const { classes } = this.props;
     return(
       <div className="tReport" >
         <body>
@@ -31,13 +58,28 @@ class Oldreport extends React.Component{
               </Typography>
             </Toolbar>
           </AppBar>
+          <Paper className={classes.root}>
+            <form onSubmit={this.handleSubmit}>
+              <div>
+                <TextField type="text" value={this.state.patientType}  label="Types of patients:" className={classes.textinput} onChange={this.handlePatient}/>
+              </div>
+              <div>
+                <TextField type="text" value={this.state.equipmentUsed} label="Equipment used:"className={classes.textinput} onChange={this.handleEquipment}/>
+              </div>
+              <div>
+                <TextField multiline={true} type="text" value={this.state.problems} label="Challenges related to equipment or infrastructure:"
+               className={classes.textinput} onChange={this.handleProblems} rowsMax="7"/>
+              </div>
 
-        <input type="submit" value="Submit"/>
-        <button className="saveButton"> Heh </button>
+            </form>
+            <div>
+              <Button className={classes.buttons} color="primary"> Change </Button>
+            </div>
+          </Paper>
         </body>
       </div>
     );
   }
 }
 
-export default Oldreport;
+export default withStyles(styles)(Oldreport);
