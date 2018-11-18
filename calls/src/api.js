@@ -1,16 +1,10 @@
-/*
-// TODO:
-https://course.dhis2.org/dhis/api/30/programs/r6qGL4AmFV4 --> finn alle relevante leger
-
-
-*/
+// API CALLS
 
 
 var enc = "Basic " + window.btoa("BjarneB"+":"+"District1-");
 
 const dhis2 = {
   baseUrl: 'https://course.dhis2.org/dhis/api/29/',
-  //baseUrl: 'https://play.dhis2.org/demo/api/29/',
 };
 
 
@@ -23,7 +17,6 @@ const headers = new Headers({
 
 const getSelectedData = spec => { // for random requests
 
-  //return fetch(`${dhis2.baseUrl}${spec}.json?ou=u3rHGQGLLP7`, {
   return fetch(`${dhis2.baseUrl}${spec}.json?ou=vwvDblM3MNX`, {
     method: 'GET',
     mode: 'cors',
@@ -34,9 +27,9 @@ const getSelectedData = spec => { // for random requests
   .then(response => response.json());
 };
 
-const getSelectedData2 = orgUnit => { // for random requests
 
-  //return fetch(`${dhis2.baseUrl}${spec}.json?ou=u3rHGQGLLP7`, {
+const getTrackedEntityInstances = orgUnit => {
+
   return fetch(`${dhis2.baseUrl}trackedEntityInstances.json?ou=${orgUnit}&
     ?filter=trackedEntityTypes:eq:nEenWmSyUEp`, {
     method: 'GET',
@@ -51,7 +44,6 @@ const getSelectedData2 = orgUnit => { // for random requests
 
 const getMetaData = () => { // for doctors, orgUnits
 
-  //return fetch(`${dhis2.baseUrl}${spec}.json?ou=u3rHGQGLLP7`, {
   return fetch(`${dhis2.baseUrl}programs/r6qGL4AmFV4/metadata.json`, {
     method: 'GET',
     mode: 'cors',
@@ -65,7 +57,6 @@ const getMetaData = () => { // for doctors, orgUnits
 
 const getReports = () => { // pass orgUnit
 
-  //return fetch(`${dhis2.baseUrl}${spec}.json?ou=u3rHGQGLLP7`, {
   return fetch(`${dhis2.baseUrl}events.json?orgUnit=vwvDblM3MNX`, {
     method: 'GET',
     mode: 'cors',
@@ -126,6 +117,7 @@ const postEvent = event => {
   .then(response => response.json());
 };
 
+
 const getEvent = event => {
   return fetch(`${dhis2.baseUrl}events?orgUnit=DUDHgE5DECu`, {  //  Search for data element
     method: 'GET',
@@ -145,7 +137,7 @@ export default {
   getReports,
   getEvent,
   postEvent,
-  getSelectedData2
+  getTrackedEntityInstances,
 };
 
 
