@@ -3,6 +3,9 @@ import logo from './logo.svg';
 import './App.css';
 import api from './api'
 
+// TEST APP
+
+
 /*
 TODO:
 - Separer leger fra DHOer i usersWithAccess
@@ -44,20 +47,16 @@ class App extends Component {
   getEvent = () => {
     api.getEvent().then(data => {
       console.warn("EVENT", data);
-    })
-  }
+    });
+  };
 
   getTrackedEntities = orgUnit => {
 
-    api.getSelectedData2(this.state.orgUnits[4].id).then(data => {
+    api.getTrackedEntityInstances(this.state.orgUnits[4].id).then(data => {
       console.warn("TRACKED ENTITIES", data)
       this.setEntityInstances(data);
     });
-    //console.log(piss);
-  /*  api.getSelectedData2(piss).then(data => {
-      console.warn("entities:", data)
-    });*/
-  }
+  };
 
 
   separateDocsFromDHOs() {  // funksjon for å loope gjennom userAccesses og fordele de i docs og DHOs
