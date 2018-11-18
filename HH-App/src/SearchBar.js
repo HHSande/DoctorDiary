@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import Test from './Test.js';
+import Api from './api.js';
 /**
 	Lagre doktorene i objekter, hvor de har en array av sine reports?
 	Lage en objekt for reports, som har dato og content i seg?
@@ -21,7 +22,7 @@ class SearchBar extends Component{
 		};
 
 		this.onChange = this.onChange.bind(this);
-		this.setInputState = this.setInputState.bind(this);
+		//this.setInputState = this.setInputState.bind(this);
 		this.toggleWindowPortal = this.toggleWindowPortal.bind(this);
 		this.listItems = null;
 	}
@@ -30,30 +31,23 @@ class SearchBar extends Component{
 		return {doctor_name: name, logged:time};
 	}
 
-	setInputState(input){
+	/*setInputState(input){
 		var workAround = this.state.dummyData;
 		workAround.push(input);
 		this.setState({dummyData: workAround, curr: workAround});
 		console.log("Tar lang tid");
 		
+	}*/
+	componentDidMount(){
+		console.log("Skjedde");
+		 Api.getReports().then(data => {
+		 	console.log(data);
+		    console.warn('REPORTS', data.events);
+		    this.setState({dummyData : data.events, curr: data.events});
+		    console.log("RAPPORTER: ", this.state.dummyData);
+   		});
 	}
-	async componentDidMount(){
-		for(var i = 0; i < 10; i++){
-			await this.sleep(2000);
-			var name = null;
-			var time = null;
-			var entry = null;
-			fetch('https://randomuser.me/api/')
-			.then(reply => reply.json())
-			.then(result => {
-				name = result.results[0].name.last;
-				time = result.results[0].registered.date;
-				entry = this.createEntry(name, time);
-				this.setInputState(entry);
-			});
-		}
-		console.log("Ferdig");
-	}
+
 	onChange(event){
 		var sum = [];
 		console.log("Hei");
@@ -65,12 +59,7 @@ class SearchBar extends Component{
   		return new Promise(resolve => setTimeout(resolve, ms));
 	}
 
-	callBack(){
-		this.setState({lestInn: true}, function(){
-			console.log("Ferdig å lese inn");
-			console.log(this.state.dummyData);
-		})
-	}
+	
 
 	filter(value){
 		var sum = [];
@@ -150,15 +139,17 @@ class SearchBar extends Component{
 
 	render(){
 			
-			if(this.state.lestInn&& this.state.curr.length > 0){
+
+			if(this.state.curr.length > 0){
+				console.log("Hei")
 				//console.log("Kjører");
 				this.listItems = this.state.curr.map((fucker) => 
 					<li onClick={
 						//console.log("Trykket på liste elem " + this.state.openWindow);
-						this.toggleWindowPortal}>{fucker.doctor_name + " " + fucker.logged}</li>
+						this.toggleWindowPortal}>{fucker.storedBy + " " + fucker.dueDate}</li>
 
 				);
-				//console.log(this.listItems);g
+				
 			}
 
 
