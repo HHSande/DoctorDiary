@@ -32,7 +32,7 @@ class SearchBar extends Component{
 		this.getEvent = this.getEvent.bind(this);
 		this.orderDataValues = this.orderDataValues.bind(this);
 		this.lessThan7 = this.lessThan7.bind(this);
-		this.openReport = this.openReport.bind(this);
+		this.closeWindow = this.closeWindow.bind(this);
 	}
 
 	createEntry(name, time){
@@ -191,21 +191,22 @@ lessThan7(data){
 	return data.dataValues.length === 7;
 }
 
-openReport = () => {
-	return (
-		<NewWindow>
-		<Oldreport data={ this.state.report } />
-		</NewWindow>
-	)
+closeWindow() {
+	this.setState({openReport : false});
+
 }
+
 
 render(){
 
 if (this.state.openReport){
+
+
 	return (
 		<NewWindow>
-		<Oldreport data={ this.state.report } />
+		<Oldreport data={ this.state.report } handler = { this.closeWindow } />
 		</NewWindow>
+
 	)
 }
 
