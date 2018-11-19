@@ -3,6 +3,7 @@ import ReactDOM from "react-dom";
 import { Paper, TextField, Input, MuiThemeProvider, AppBar, Button, Toolbar, Typography } from '@material-ui/core/';
 import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
+import Api from './api.js';
 
 /*
 getEvent(eventID){
@@ -50,6 +51,9 @@ class Oldreport extends React.Component{
       textField3: "",
       textField4: "",
     };
+
+    this.handlePatient = this.handlePatient.bind(this);
+    this.saveChanges = this.saveChanges.bind(this);
   };
 
   setValue(text, id){
@@ -63,7 +67,10 @@ class Oldreport extends React.Component{
     } else if (id == "p5D5Y9x7yMc"){
       this.setState({ textField4 : text});
     }
-}
+  }
+
+
+
 
 
   componentDidMount() {
@@ -119,10 +126,58 @@ class Oldreport extends React.Component{
     }
   }
 
+
+  handlePatient(event)  {
+    this.setState({ textField1: event.target.value });
+  }
+
+  saveChanges() {
+
+    // endrer objektet
+
+    var temp = JSON.parse(this.props.report);
+    console.log("BODY: ", temp);
+
+    console.log("DET VI SKAL HA", temp.dataValues[0]);
+
+    temp.dataValues[0].value = this.state.textField;
+
+    const event = {
+      dataValues: [this.state.textField1]
+    }
+
+    console.log("EVENT: ", event);
+
+    var baseUrl = Api.dhis2.baseUrl;
+    var headers = Api.headers;
+
+    fetch(`${baseUrl}events/${this.props.eventID}/romAEndBlt4`, {
+      method: 'PUT',
+      credentials: 'include',
+      mode: 'cors',
+      headers,
+      body: JSON.stringify(temp),
+    })
+    .catch(error => error)
+    .then(response => response.json());
+
+
+    fetch(`${baseUrl}events/${this.props.eventID}/romAEndBlt4`, {
+      method: 'GET',
+      credentials: 'include',
+      mode: 'cors',
+      headers,
+    })
+    .catch(error => error)
+    .then(response => response.json());
+  }
+
+
+
   render(){
     const { classes } = this.props;
     return(
-      <div className="tReport" onClick={this.props.handler}>
+      <div className="tReport">
       <body>
 
       <AppBar position="static" color="primary">
@@ -136,19 +191,20 @@ class Oldreport extends React.Component{
       <Paper className={classes.root}>
       <form onSubmit={this.handleSubmit}>
       <div>
-      <TextField type="text" id="romAEndBlt4" value={this.state.textField1}  label="Types of patients:" className={classes.textinput} onChange={this.handlePatient}/>
+      <TextField type="text" ref="romAEndBlt4" value={this.state.textField1}  label="Types of patients:" className={classes.textinput} onChange={this.handlePatient}/>
       </div>
       <div>
-      <TextField type="text" id="EZstOIjb7wN" value={this.state.textField2} label="Equipment used:"className={classes.textinput} onChange={this.handleEquipment}/>
+      <TextField type="text" ref="EZstOIjb7wN" value={this.state.textField2} label="Equipment used:"className={classes.textinput} onChange={this.handleEquipment}/>
       </div>
       <div>
-      <TextField multiline={true} type="text" id="EZstOIjb7wN" value={this.state.textField3} label="Challenges related to equipment or infrastructure:"
+      <TextField multiline={true} type="text" ref="EZstOIjb7wN" value={this.state.textField3} label="Challenges related to equipment or infrastructure:"
       className={classes.textinput} onChange={this.handleProblems} rowsMax="7"/>
       </div>
 
       </form>
       <div>
-      <Button className={classes.buttons} color="primary"> Change </Button>
+      <Button className={classes.buttons} onClick={this.saveChanges} color="primary"> Change </Button>
+      <Button className={classes.buttons} onClick={this.props.handler} color="primary"> Close </Button>
       </div>
       </Paper>
       </body>

@@ -23,6 +23,8 @@ class SearchBar extends Component{
 			curr: [],
 			openReport: false,
 			report: [],
+			id: "",
+			getObject: "",
 		};
 
 		this.onChange = this.onChange.bind(this);
@@ -144,7 +146,9 @@ toggleWindowPortal() {
 }
 
 getEvent(eventID){
-	Api.getEntryFromDoctor(eventID).then(data => this.setState({ report : data.dataValues, openReport: true }));
+	Api.getEntryFromDoctor(eventID).then(data => this.setState({ report : data.dataValues, openReport: true, id : eventID,
+	getObject : JSON.stringify(data) }));
+
 }
 
 orderDataValues(dataValues){
@@ -204,7 +208,7 @@ if (this.state.openReport){
 
 	return (
 		<NewWindow>
-		<Oldreport data={ this.state.report } handler = { this.closeWindow } />
+		<Oldreport data={ this.state.report } handler = { this.closeWindow } eventID = { this.state.id } report = { this.state.getObject }/>
 		</NewWindow>
 
 	)
