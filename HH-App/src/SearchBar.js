@@ -32,9 +32,10 @@ class SearchBar extends Component{
 		this.toggleWindowPortal = this.toggleWindowPortal.bind(this);
 		this.listItems = null;
 		this.getEvent = this.getEvent.bind(this);
-		this.orderDataValues = this.orderDataValues.bind(this);
+		//this.orderDataValues = this.orderDataValues.bind(this);
 		this.lessThan7 = this.lessThan7.bind(this);
 		this.closeWindow = this.closeWindow.bind(this);
+		this.sortDataValues = this.sortDataValues.bind(this);
 	}
 
 	createEntry(name, time){
@@ -74,7 +75,7 @@ sleep(ms) {
 filter(value){
 	var sum = [];
 	for(var i = 0; i < this.state.dummyData.length; i++){
-		if(this.state.dummyData[i].storedBy.startsWith(value)){
+		if(this.state.dummyData[i].storedBy.toLowerCase().startsWith(value)){
 			//console.log(this.state.dummyData[i].doctor_name + " hadde " + value);
 			sum.push(this.state.dummyData[i]);
 		}
@@ -124,7 +125,7 @@ filterName(name){
 	//window.open("https://www.w3schools.com");
 	console.log(name);
 	document.getElementById("in").value = name;
-	this.filter(name);
+	this.filter(name.toLowerCase());
 	//this.toggleWindowPortal();
 }
 
@@ -146,12 +147,33 @@ toggleWindowPortal() {
 }
 
 getEvent(eventID){
-	Api.getEntryFromDoctor(eventID).then(data => this.setState({ report : data.dataValues, openReport: true, id : eventID,
-	getObject : JSON.stringify(data) }));
+	Api.getEntryFromDoctor(eventID).then(data => this.setState({ report : this.sortDataValues(data.dataValues), openReport: true, id : eventID,
+	getObject : JSON.stringify(data) }, function(){
+		console.log(this.state.getObject);
+	}));
+
+
 
 }
 
-orderDataValues(dataValues){
+sortDataValues(array){
+	if(!array.length === 7){
+		return array;
+	}else{
+		var ny = array.sort(function(a, b){
+			if (a.dataElement < b.dataElement){
+				return -1;
+			}
+			if (a.dataElement > b.dataElement){
+				return 1;
+			}
+			return 0;
+		});
+
+		return ny;
+	}	
+}
+/*orderDataValues(dataValues){
 	/*
 	console.log(dataValue);
 	var ny = dataValues.sort(function(a, b){
@@ -165,7 +187,7 @@ return 0;
 });
 return ny;
 */
-
+/*
 for(var i = 0; i < dataValues.length; i++){
 	if(dataValues[i].dataElement === "zrZADVnTtMa"){
 		console.log(dataValues[i].value);
@@ -189,6 +211,8 @@ for(var i = 0; i < dataValues.length; i++){
 console.log("Sanity check");
 
 }
+
+*/
 
 lessThan7(data){
 	console.log(data);
@@ -214,12 +238,12 @@ if (this.state.openReport){
 	)
 }
 
-	if(this.state.curr.length > 0){
+	if(this.state.curr.length > 0 && this.state.getObject === ""){
 		console.log("Hei")
 		//console.log("Kjører");
 		this.listItems = this.state.curr.filter(this.lessThan7).map((fucker) =>
 		<li onClick={() =>
-			this.getEvent(fucker.event)}>{fucker.storedBy + " " + fucker.dueDate + " " + this.orderDataValues(fucker.dataValues)}</li>
+			this.getEvent(fucker.event)}>{fucker.storedBy + " " + fucker.dueDate /* + " " + this.orderDataValues(fucker.dataValues)*/ }</li>
 		);
 
 	}

@@ -58,7 +58,7 @@ const getMetaData = () => { // for doctors, orgUnits
 const getReports = () => { // pass orgUnit
 
   console.log("Kjører")
-  return fetch(`${dhis2.baseUrl}events.json?orgUnit=vwvDblM3MNX`, {
+  return fetch(`${dhis2.baseUrl}events.json?program=r6qGL4AmFV4`, {
     method: 'GET',
     mode: 'cors',
     credentials: 'include',
@@ -130,7 +130,7 @@ const getEntryFromDoctor = eventID => {
 }
 
 const getEvent = event => {
-  return fetch(`${dhis2.baseUrl}events?orgUnit=DUDHgE5DECu`, {  //  Search for data element
+  return fetch(`${dhis2.baseUrl}events?program=r6qGL4AmFV4`, {  //  Search for data element
     method: 'GET',
     mode: 'cors',
     credentials: 'include',

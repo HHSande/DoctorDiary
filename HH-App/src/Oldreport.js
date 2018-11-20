@@ -11,7 +11,16 @@ Api.getEntryFromDoctor(eventID).then(data => console.log(data));
 }
 */
 
-
+/***********************************************************************
+                              VIKTIG
+[0] = No TEST of Emergency Cesearean Cases provided anaesthesia during day till 5PM = BIB2zYDYIJp
+[1] = No of Emergency Cesearean Cases provided anaesthesia during night time (5PM - Morning) = CXL5mg5l0cv
+[2] = "Anaesthesia provided to other cases" = EZstOIjb7wN
+[3] = Remarks/ Feedback/ Details of Challenges faced = LoY92GDoDC6
+[4] = Challanges faced other = p5D5Y9x7yMc
+[5] = "Challenges faced" = romAEndBlt4
+[6] = Approved/Rejected Current Status = zrZADVnTtMa
+***********************************************************************/
 const styles = theme => ({
   root: {
     width: '80%',
@@ -46,40 +55,28 @@ class Oldreport extends React.Component{
       problems:'bare masse problemer her. bruker denne til å se hvordan multiline fungerer',
       status:'',
       data: [],
-      textField1: "",
-      textField2: "",
-      textField3: "",
-      textField4: "",
+      currentField: "",
+      clicked: false,
+      jsonObject: null
     };
 
-    this.handlePatient = this.handlePatient.bind(this);
+    this.handleInput = this.handleInput.bind(this);
     this.saveChanges = this.saveChanges.bind(this);
+    this.focusIn = this.focusIn.bind(this);
+    this.focusOut = this.focusOut.bind(this);
   };
 
-  setValue(text, id){
-
-    if (id == "zrZADVnTtMa"){
-      this.setState({ textField1: text });
-    } else if (id == "romAEndBlt4"){
-      this.setState({ textField2 : text});
-    } else if (id == "EZstOIjb7wN"){
-      this.setState({ textField3 : text});
-    } else if (id == "p5D5Y9x7yMc"){
-      this.setState({ textField4 : text});
-    }
-  }
-
-
-
-
-
+  
   componentDidMount() {
 
-    var dataValues = this.props.data;
-
-    console.log("dataValues: ", dataValues);
-
-    for(var i = 0; i < dataValues.length; i++){
+    console.log("Hva er report?", this.props.report);
+    console.log("Skal ikke være undefined", this.props.data);
+    this.setState({jsonObject: JSON.parse(this.props.report), data: this.props.data});
+    //console.log("dataValues: ", dataValues);
+    //Mappe values
+    //var dataValues = this.state.data;
+    //for(var i = 0; i < this.state.length; i++){
+      /*
       if(dataValues[i].dataElement === "zrZADVnTtMa"){
         console.log(dataValues[i].value);
         switch(parseInt(dataValues[i].value)){
@@ -123,35 +120,110 @@ class Oldreport extends React.Component{
       }else if(dataValues[i].dataElement === "p5D5Y9x7yMc"){
         this.setValue("verdi2", dataValues[i].dataElement);
       }
-    }
+      */
+    //}
   }
 
-
+  //Må endre arrayet
+  /* 
   handlePatient(event)  {
     this.setState({ textField1: event.target.value });
   }
 
-  saveChanges() {
+  handleEquipment(event) {
+    this.setState({ textField2 : event.target.value });
+  }
+
+  handleProblems(event) {
+    this.setState({ textField3: event.target.value});
+  }
+  */
+  handleInput(event, id){
+    console.log("Ble kalt fra ", id);
+    var copy = this.state.data;
+    copy[id] = event.target.value;
+
+
+    this.setState({data: copy});
+  }
+
+  saveChanges(param, textfield) {
 
     // endrer objektet
 
-    var temp = JSON.parse(this.props.report);
+    //var fucker = [this.state.textField1, this.state.textField2, this.state.textField3];
+    var temp = this.state.jsonObject;
     console.log("BODY: ", temp);
+    //console.log("DET VI SKAL HA", temp.dataValues[0]);
+    //console.log(temp.dataValues);
+    console.log(temp[0]);
+    var test = temp.dataValues;
+    console.log("Test", test);
 
-    console.log("DET VI SKAL HA", temp.dataValues[0]);
+    for(var i = 0; i < test.length; i++){
+      if(test[i].dataElement === param){
+        test[i].value = textfield;
+      }
+    }
+    //for(var i = 0; i < )
+    /*
+    var field = "";
+    for(var i = 0; i < test.length; i++){
+      console.log(test[i].dataElement);
 
-    temp.dataValues[0].value = this.state.textField;
+      if(test[i].dataElement === "romAEndBlt4"){
+        console.log("FANT romAEndBlt4");
+        test[i].value = this.state.textField1;
+        field = test[i].dataElement;
+        break;
+      }else if(test[i].dataElement === "EZstOIjb7wN"){
+        console.log("FANT EZstOIjb7wN");
+        test[i].value = this.state.textField2;
+        field = test[i].dataElement;
+        break;
+      }else if(test[i].dataElement === "zrZADVnTtMa"){
+        console.log("FANT zrZADVnTtMa");
+        test[i].value = this.state.textField3;
+        field = test[i].dataElement;
+        break;
+      }
+
+    }
+    */
+      temp.dataValues = test;
+
+      var baseUrl = Api.dhis2.baseUrl;
+      var headers = Api.headers;
+      fetch(`${baseUrl}events/${this.props.eventID}/${param}`, {
+        method: 'PUT',
+        credentials: 'include',
+        mode: 'cors',
+        headers,
+        body: JSON.stringify(temp),
+      })
+      .catch(error => error)
+      .then(response => response.json());
+
+    console.log("BODY etter: ", temp);
+    this.setState({jsonObject: temp});
+    //console.log(temp.dataValues[0].dataElement);
+    //console.log(this.state.textField1);
+    //temp.dataValues[0].dataElement = this.state.textField1;
+    /*
+    
+
+    
 
     const event = {
       dataValues: [this.state.textField1]
     }
 
     console.log("EVENT: ", event);
-
+    */
+    /*
     var baseUrl = Api.dhis2.baseUrl;
     var headers = Api.headers;
-
-    fetch(`${baseUrl}events/${this.props.eventID}/romAEndBlt4`, {
+    fetch(`${baseUrl}events/${this.props.eventID}/${this.state.currentField}`, {
       method: 'PUT',
       credentials: 'include',
       mode: 'cors',
@@ -160,8 +232,8 @@ class Oldreport extends React.Component{
     })
     .catch(error => error)
     .then(response => response.json());
-
-
+    */
+    /*
     fetch(`${baseUrl}events/${this.props.eventID}/romAEndBlt4`, {
       method: 'GET',
       credentials: 'include',
@@ -170,12 +242,31 @@ class Oldreport extends React.Component{
     })
     .catch(error => error)
     .then(response => response.json());
+    */
   }
 
+  focusIn(){
+    console.log("Focus in");
+    this.setState({clicked: true});
+  }
 
+  focusOut(param, textfield){
+    console.log("Focus out");
+    if(this.state.clicked){
+      this.saveChanges(param, textfield);
+    }
+    
+    this.setState({clicked: false});
+  }
 
   render(){
     const { classes } = this.props;
+    if(this.state.data.length < 1){
+      return(
+        <div>
+          <p>Fitte</p>
+        </div>);
+    }
     return(
       <div className="tReport">
       <body>
@@ -191,14 +282,14 @@ class Oldreport extends React.Component{
       <Paper className={classes.root}>
       <form onSubmit={this.handleSubmit}>
       <div>
-      <TextField type="text" ref="romAEndBlt4" value={this.state.textField1}  label="Types of patients:" className={classes.textinput} onChange={this.handlePatient}/>
+      <TextField type="text" onFocus={this.focusIn} onBlur={() => this.focusOut("zrZADVnTtMa", this.state.data[6])} value={this.state.data[6].value}  label="Approved/Rejcted Current Status:" className={classes.textinput} onChange={(event) => this.handleInput(event, 6)}/>
       </div>
       <div>
-      <TextField type="text" ref="EZstOIjb7wN" value={this.state.textField2} label="Equipment used:"className={classes.textinput} onChange={this.handleEquipment}/>
+      <TextField type="text" onFocus={this.focusIn} onBlur={() => this.focusOut("EZstOIjb7wN", this.state.data[2])} value={this.state.data[2].value} label="Anaesthesia provided to other cases:"className={classes.textinput} onChange={(event) => this.handleInput(event, 2)}/>
       </div>
       <div>
-      <TextField multiline={true} type="text" ref="EZstOIjb7wN" value={this.state.textField3} label="Challenges related to equipment or infrastructure:"
-      className={classes.textinput} onChange={this.handleProblems} rowsMax="7"/>
+      <TextField multiline={true} type="text" onFocus={this.focusIn} onBlur={() => this.focusOut("romAEndBlt4", this.state.data[5])} value={this.state.data[5].value} label="Challenges faced:"
+      className={classes.textinput} onChange={(event) => this.handleInput(event, this.state.data[5])} rowsMax="7"/>
       </div>
 
       </form>
