@@ -1,7 +1,7 @@
 import './report.css';
 import React, { Component } from 'react';
 import ReactDOM from "react-dom";
-import { Paper, TextField, Input, MuiThemeProvider, AppBar, Button, Toolbar, Typography } from '@material-ui/core/';
+import { Select, MenuItem, Paper, TextField, Input, MuiThemeProvider, AppBar, Button, Toolbar, Typography } from '@material-ui/core/';
 import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 
@@ -25,6 +25,13 @@ const styles = theme => ({
     marginTop:'2rem',
     margin:'0',
     overflow: 'auto',
+  },
+  dropdown: {
+    width: '20%',
+    marginTop: '10%',
+  },
+  input: {
+    fontSize: '10',
   }
 
 });
@@ -36,13 +43,27 @@ class Oldreport extends React.Component{
       date:'',
       timeFrom:'',
       timeTo:'',
-      patientType:'',
-      equipmentUsed:'',
-      problems:'bare masse problemer her. bruker denne til å se hvordan multiline fungerer',
+      patientType:'lalalal',
+      equipmentUsed:'lalalala',
+      problems:[],
       status:''
       };
+
+      this.handleEquipment = this.handleEquipment.bind(this);
+      this.handlePatient = this.handlePatient.bind(this);
     };
 
+
+    handlePatient(event){
+      this.setState({patientType: event.target.value});
+    }
+    handleEquipment(event){
+      this.setState({equipmentUsed: event.target.value});
+    }
+
+    handleChange = event => {
+    this.setState({ [event.target.name]: event.target.value });
+    };
 
   render(){
     const { classes } = this.props;
@@ -67,8 +88,21 @@ class Oldreport extends React.Component{
                 <TextField type="text" value={this.state.equipmentUsed} label="Equipment used:"className={classes.textinput} onChange={this.handleEquipment}/>
               </div>
               <div>
-                <TextField multiline={true} type="text" value={this.state.problems} label="Challenges related to equipment or infrastructure:"
-               className={classes.textinput} onChange={this.handleProblems} rowsMax="7"/>
+                <TextField select={true} type="text" value={this.state.problems} label="Challenges related to equipment or infrastructure:"
+               className={classes.dropdown} InputProps={{ classes: {input: classes.input } }}
+
+               onChange={this.handleProblems} rowsMax="7"/>
+              </div>
+              <div>
+                <Select value={0}  onChange={this.handleChange}  className={classes.dropdown} InputProps={{ classes: {input: classes.input } }} input={<Input name="age" id="age-helper" />} >
+                  <MenuItem value="">
+                  <em>None</em>
+                  </MenuItem>
+                  <MenuItem value={'User issue'}>User issue</MenuItem>
+                  <MenuItem value={'Technical issue'}>Technical issue</MenuItem>
+                  <MenuItem value={'Equipment issue'}>Equipment issue</MenuItem>
+                  <MenuItem value={'Health worker issue'}>Health worker issue</MenuItem>
+                </Select>
               </div>
 
             </form>
