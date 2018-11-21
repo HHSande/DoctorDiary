@@ -73,13 +73,17 @@ sleep(ms) {
 
 
 filter(value){
+	console.log("Blir kalt?");
+	console.log(value);
 	var sum = [];
 	for(var i = 0; i < this.state.dummyData.length; i++){
 		if(this.state.dummyData[i].storedBy.toLowerCase().startsWith(value)){
 			//console.log(this.state.dummyData[i].doctor_name + " hadde " + value);
+			console.log("Matched ", this.state.dummyData[i].storedBy.toLowerCase());
 			sum.push(this.state.dummyData[i]);
 		}
 	}
+	console.log(sum);
 	this.setState({curr: sum});
 
 }
@@ -149,6 +153,7 @@ toggleWindowPortal() {
 getEvent(eventID){
 	Api.getEntryFromDoctor(eventID).then(data => this.setState({ report : this.sortDataValues(data.dataValues), openReport: true, id : eventID,
 	getObject : JSON.stringify(data) }, function(){
+		//console.log("Hva skjer?");
 		console.log(this.state.getObject);
 	}));
 

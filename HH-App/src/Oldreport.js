@@ -57,13 +57,16 @@ class Oldreport extends React.Component{
       data: [],
       currentField: "",
       clicked: false,
-      jsonObject: null
+      jsonObject: null,
+      noteValue: "",
+      notes: []
     };
 
     this.handleInput = this.handleInput.bind(this);
     this.saveChanges = this.saveChanges.bind(this);
     this.focusIn = this.focusIn.bind(this);
     this.focusOut = this.focusOut.bind(this);
+    this.printArray = this.printArray.bind(this);
   };
 
   
@@ -71,7 +74,14 @@ class Oldreport extends React.Component{
 
     console.log("Hva er report?", this.props.report);
     console.log("Skal ikke være undefined", this.props.data);
-    this.setState({jsonObject: JSON.parse(this.props.report), data: this.props.data});
+    this.setState({jsonObject: JSON.parse(this.props.report), data: this.props.data, notes: JSON.parse(this.props.report).notes});
+    /*var json = JSON.parse(this.props.report);
+    var notes = json.notes;
+    console.log("NOTES");
+
+    for(var i = 0; i < notes.length; i++){
+      console.log(notes[i]);
+    }*/
     //console.log("dataValues: ", dataValues);
     //Mappe values
     //var dataValues = this.state.data;
@@ -147,15 +157,75 @@ class Oldreport extends React.Component{
     this.setState({data: copy});
   }
 
+  handleNoteInput(event){
+    this.setState({noteValue: event.target.value});
+  }
+
+  printArray(array){
+    if(array === undefined){
+      return "";
+    }
+    var str = "";
+
+    for(var i = 0; i < array.length; i++){
+      var splitted = array[i].storedDate.split("T");
+      str += splitted[0] + " " + array[i].storedBy + " " + array[i].value + "\n";
+    }
+    return str;
+  }
   saveChanges(param, textfield) {
 
     // endrer objektet
-
+    var baseUrl = Api.dhis2.baseUrl;
+    var headers = Api.headers;
     //var fucker = [this.state.textField1, this.state.textField2, this.state.textField3];
     var temp = this.state.jsonObject;
     console.log("BODY: ", temp);
     //console.log("DET VI SKAL HA", temp.dataValues[0]);
     //console.log(temp.dataValues);
+
+    if(param === 7){
+      //console.log("JSON vi sjekker på", temp);
+      var fucker = [{value: this.state.noteValue}];
+      //console.log("Sjekker om undefined");
+      if(temp.notes !== undefined){
+        //console.log("Ikke undefined");
+        var temp = temp.notes;
+        var nyArray = new Array(temp.length);
+        for(var i = 0; i < temp.length; i++){
+          nyArray[i] = temp[i];
+        }
+        //console.log("Ute av loop");
+        nyArray[temp.length] = fucker[0];
+        //console.log(nyArray);
+        fucker = nyArray;
+      }
+      //console.log("Var undefined");
+      //temp.notes[0] = fucker;
+      //console.log("temp.notes[0].value ", temp.notes[0].value);
+
+      var jsonObject = {
+        event: temp.event,
+        notes: fucker,
+        orgUnit: temp.orgUnit,
+        program: temp.program,
+        programStage: temp.program,
+        trackedEntityInstance: temp.trackedEntityInstance 
+      }
+      
+      console.log("Poster");
+      fetch(`${baseUrl}events/${this.props.eventID}/note`, {
+        method: 'POST',
+        credentials: 'include',
+        mode: 'cors',
+        headers,
+        body: JSON.stringify(jsonObject),
+      })
+      .catch(error => error)
+      .then(response => response.json());
+      return;
+
+    }
     console.log(temp[0]);
     var test = temp.dataValues;
     console.log("Test", test);
@@ -192,8 +262,6 @@ class Oldreport extends React.Component{
     */
       temp.dataValues = test;
 
-      var baseUrl = Api.dhis2.baseUrl;
-      var headers = Api.headers;
       fetch(`${baseUrl}events/${this.props.eventID}/${param}`, {
         method: 'PUT',
         credentials: 'include',
@@ -289,9 +357,30 @@ class Oldreport extends React.Component{
       </div>
       <div>
       <TextField multiline={true} type="text" onFocus={this.focusIn} onBlur={() => this.focusOut("romAEndBlt4", this.state.data[5])} value={this.state.data[5].value} label="Challenges faced:"
-      className={classes.textinput} onChange={(event) => this.handleInput(event, this.state.data[5])} rowsMax="7"/>
+      className={classes.textinput} onChange={(event) => this.handleInput(event, 5)} rowsMax="7"/>
       </div>
-
+      <div>
+      <TextField type="text" onFocus={this.focusIn} onBlur={() => this.focusOut("CXL5mg5l0cv", this.state.data[1])} value={this.state.data[1].value} label="No of Emergency Cesearean Cases provided anaesthesia during night time (5PM - Morning):"className={classes.textinput} onChange={(event) => this.handleInput(event, 1)}/>
+      </div>
+      <div>
+      <TextField type="text" onFocus={this.focusIn} onBlur={() => this.focusOut("BIB2zYDYIJp", this.state.data[0])} value={this.state.data[0].value} label="No TEST of Emergency Cesearean Cases provided anaesthesia during day till 5PM:"className={classes.textinput} onChange={(event) => this.handleInput(event, 0)}/>
+      </div>
+      <div>
+      <TextField multiline={true} type="text" onFocus={this.focusIn} onBlur={() => this.focusOut("LoY92GDoDC6", this.state.data[3])} value={this.state.data[3].value} label="Remarks/ Feedback/ Details of Challenges faced:"
+      className={classes.textinput} onChange={(event) => this.handleInput(event, 3)} rowsMax="7"/>
+      </div>
+      <div>
+      <TextField multiline={true} type="text" onFocus={this.focusIn} onBlur={() => this.focusOut("p5D5Y9x7yMc", this.state.data[4])} value={this.state.data[4].value} label="Challanges faced other:"
+      className={classes.textinput} onChange={(event) => this.handleInput(event, 4)} rowsMax="7"/>
+      </div>
+      <div>
+      <TextField multiline={true} type="text"  value={this.printArray(this.state.notes)} label="Prev Notes"
+      className={classes.textinput}/>
+      </div>
+      <div>
+      <TextField multiline={true} type="text" onFocus={this.focusIn} onBlur={() => this.focusOut(7, null)} label="Notes:"
+      className={classes.textinput} onChange={(event) => this.handleNoteInput(event, 7)} rowsMax="7"/>
+      </div>
       </form>
       <div>
       <Button className={classes.buttons} onClick={this.saveChanges} color="primary"> Change </Button>
