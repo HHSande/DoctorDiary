@@ -235,31 +235,6 @@ class Oldreport extends React.Component{
         test[i].value = textfield;
       }
     }
-    //for(var i = 0; i < )
-    /*
-    var field = "";
-    for(var i = 0; i < test.length; i++){
-      console.log(test[i].dataElement);
-
-      if(test[i].dataElement === "romAEndBlt4"){
-        console.log("FANT romAEndBlt4");
-        test[i].value = this.state.textField1;
-        field = test[i].dataElement;
-        break;
-      }else if(test[i].dataElement === "EZstOIjb7wN"){
-        console.log("FANT EZstOIjb7wN");
-        test[i].value = this.state.textField2;
-        field = test[i].dataElement;
-        break;
-      }else if(test[i].dataElement === "zrZADVnTtMa"){
-        console.log("FANT zrZADVnTtMa");
-        test[i].value = this.state.textField3;
-        field = test[i].dataElement;
-        break;
-      }
-
-    }
-    */
       temp.dataValues = test;
 
       fetch(`${baseUrl}events/${this.props.eventID}/${param}`, {
@@ -277,40 +252,6 @@ class Oldreport extends React.Component{
     //console.log(temp.dataValues[0].dataElement);
     //console.log(this.state.textField1);
     //temp.dataValues[0].dataElement = this.state.textField1;
-    /*
-    
-
-    
-
-    const event = {
-      dataValues: [this.state.textField1]
-    }
-
-    console.log("EVENT: ", event);
-    */
-    /*
-    var baseUrl = Api.dhis2.baseUrl;
-    var headers = Api.headers;
-    fetch(`${baseUrl}events/${this.props.eventID}/${this.state.currentField}`, {
-      method: 'PUT',
-      credentials: 'include',
-      mode: 'cors',
-      headers,
-      body: JSON.stringify(temp),
-    })
-    .catch(error => error)
-    .then(response => response.json());
-    */
-    /*
-    fetch(`${baseUrl}events/${this.props.eventID}/romAEndBlt4`, {
-      method: 'GET',
-      credentials: 'include',
-      mode: 'cors',
-      headers,
-    })
-    .catch(error => error)
-    .then(response => response.json());
-    */
   }
 
   focusIn(){

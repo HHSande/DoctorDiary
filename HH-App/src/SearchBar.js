@@ -25,6 +25,7 @@ class SearchBar extends Component{
 			report: [],
 			id: "",
 			getObject: "",
+			connectivity: false
 		};
 
 		this.onChange = this.onChange.bind(this);
@@ -36,6 +37,7 @@ class SearchBar extends Component{
 		this.lessThan7 = this.lessThan7.bind(this);
 		this.closeWindow = this.closeWindow.bind(this);
 		this.sortDataValues = this.sortDataValues.bind(this);
+		this.checkConnectivity = this.checkConnectivity.bind(this);
 	}
 
 	createEntry(name, time){
@@ -50,6 +52,8 @@ class SearchBar extends Component{
 
 }*/
 componentDidMount(){
+	this.checkConnectivity();
+	setInterval(this.checkConnectivity, 3000);
 	console.log("Skjedde");
 	Api.getReports().then(data => {
 		console.log(data);
@@ -125,6 +129,12 @@ sortByDate(){
 	}
 }
 
+checkConnectivity(){
+	if(this.state.connectivity !== navigator.onLine){
+		this.setState({connectivity: navigator.onLine});
+	}
+	
+}
 filterName(name){
 	//window.open("https://www.w3schools.com");
 	console.log(name);
@@ -178,46 +188,7 @@ sortDataValues(array){
 		return ny;
 	}	
 }
-/*orderDataValues(dataValues){
-	/*
-	console.log(dataValue);
-	var ny = dataValues.sort(function(a, b){
-	if (a.dataElement < b.dataElement){
-	return -1;
-}
-if (a.dataElement > b.dataElement){
-return 1;
-}
-return 0;
-});
-return ny;
-*/
-/*
-for(var i = 0; i < dataValues.length; i++){
-	if(dataValues[i].dataElement === "zrZADVnTtMa"){
-		console.log(dataValues[i].value);
-		switch(parseInt(dataValues[i].value)){
-			case 1:
-			return "Approved";
-			break;
-			case 2:
-			return "Rejected";
-			break;
-			case 3:
-			return "Pending";
-			break;
-			default:
-			console.log("Skal ikke kommme hit");
-			break;
-		}
-	}
-}
 
-console.log("Sanity check");
-
-}
-
-*/
 
 lessThan7(data){
 	console.log(data);
@@ -232,6 +203,13 @@ closeWindow() {
 
 render(){
 
+if(!this.state.connectivity){
+	return(
+		<div>
+		<p> VI HAR IKKE NETT :OOO </p>
+		</div>
+	);
+}
 if (this.state.openReport){
 
 
@@ -262,7 +240,6 @@ if (this.state.openReport){
 		);
 	}
 
-	console.log("Ikke noe vindu");
 
 	//console.log("Her skal være false: " + this.state.openWindow);
 
