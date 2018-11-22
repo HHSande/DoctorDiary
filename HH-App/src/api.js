@@ -1,7 +1,7 @@
 // API CALLS
 
 
-var enc = "Basic " + window.btoa("admin"+":"+"district");
+var enc = "Basic " + window.btoa("CasperL"+":"+"District1-");
 
 const dhis2 = {
   baseUrl: 'https://course.dhis2.org/dhis/api/29/',
@@ -13,6 +13,39 @@ const headers = new Headers({
   Authorization: enc,
   Accept: 'application/json',
 });
+
+const headersForMe = new Headers({  // brukes for api/me, fordi Content-Type ikke funke for det
+  Authorization: enc,
+  Accept: 'application/json',
+});
+
+
+
+const getMe = () => {
+
+  var headers = headersForMe;
+
+  return fetch(`${dhis2.baseUrl}me`, {
+    method: 'GET',
+    mode: 'cors',
+    credentials: 'include',
+    headers,
+  })
+  .catch(error => error)
+  .then(response => response.json());
+};
+
+const getInstanceAndEnrollment = hospital => { // for random requests
+
+  return fetch(`${dhis2.baseUrl}events?orgUnit=${hospital}`, {
+    method: 'GET',
+    mode: 'cors',
+    credentials: 'include',
+    headers,
+  })
+  .catch(error => error)
+  .then(response => response.json());
+};
 
 
 const getSelectedData = spec => { // for random requests
@@ -66,7 +99,7 @@ const getReports = () => { // pass orgUnit
   })
   .catch(error => error)
   .then(response => response.json());
-    
+
 };
 
 
@@ -131,7 +164,7 @@ const getEntryFromDoctor = eventID => {
 }
 
 const getEvent = event => {
-  return fetch(`${dhis2.baseUrl}events?program=r6qGL4AmFV4`, {  //  Search for data element
+  return fetch(`${dhis2.baseUrl}events?${event}`, {  //  Search for data element
     method: 'GET',
     mode: 'cors',
     credentials: 'include',
@@ -153,6 +186,8 @@ export default {
   getTrackedEntityInstances,
   dhis2,
   headers,
+  getMe,
+  getInstanceAndEnrollment
 };
 
 
