@@ -1,7 +1,7 @@
 // API CALLS
 
 
-var enc = "Basic " + window.btoa("BjarneB"+":"+"District1-");
+var enc = "Basic " + window.btoa("CasperL"+":"+"District1-");
 
 const dhis2 = {
   baseUrl: 'https://course.dhis2.org/dhis/api/29/',
@@ -141,6 +141,7 @@ const getDataElement = id => {
 }
 
 const postEvent = event => {
+  console.log("Event som blir sendt med i postEvent", event);
   return fetch(`${dhis2.baseUrl}events/`, {
     method: 'POST',
     credentials: 'include',
@@ -154,6 +155,7 @@ const postEvent = event => {
 
 const getEntryFromDoctor = eventID => {
   console.log("Kjører");
+  console.log("Inn i getFromDoc", eventID);
   return fetch(`${dhis2.baseUrl}events/${eventID}`, {
     method: 'GET',
     credentials: 'include',

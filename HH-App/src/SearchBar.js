@@ -2,7 +2,10 @@ import React, { Component } from 'react';
 import Test from './Test.js';
 import Api from './api.js';
 import NewWindow from 'react-new-window';
-import Oldreport from './Oldreport.js'
+import Oldreport from './Oldreport.js';
+import { Paper, TextField, Input, MuiThemeProvider, AppBar, Button, Toolbar, Typography } from '@material-ui/core/';
+import { withStyles } from '@material-ui/core/styles';
+import PropTypes from 'prop-types';
 /**
 Lagre doktorene i objekter, hvor de har en array av sine reports?
 Lage en objekt for reports, som har dato og content i seg?
@@ -10,6 +13,30 @@ Lage en objekt for reports, som har dato og content i seg?
 Lage en funksjon som generere en tr for navn og en for dato,
 disse skal kunne sorteres.
 **/
+
+const styles = theme => ({
+  root: {
+    width: '80%',
+    margin:'0 auto',
+    marginTop: '1%',
+    overflowX: 'auto',
+  },
+  buttons: {
+    marginTop: '3%',
+    margin: '1 auto',
+    backgroundColor: '#3f51b5',
+    color: 'white',
+  },
+  textinput: {
+    marginTop:'2rem',
+    marginTop:'2rem',
+    margin:'0',
+    overflow: 'auto',
+  },
+
+
+});
+
 class SearchBar extends Component{
 	constructor(props){
 		super(props);
@@ -28,7 +55,11 @@ class SearchBar extends Component{
 			connectivity: navigator.onLine,
 			funcArray: [],
 			username: "",
-			officer: false
+			officer: false,
+			orgUnit: "",
+			reports: [],
+			instance: "",
+			enrollment: ""
 		};
 
 		this.onChange = this.onChange.bind(this);
@@ -193,9 +224,10 @@ toggleWindowPortal() {
 }
 
 getEvent(eventID){
-	Api.getEntryFromDoctor(eventID).then(data => this.setState({ report : this.sortDataValues(data.dataValues), openReport: true, id : eventID,
+	Api.getEntryFromDoctor(eventID).then(data => this.setState({ report : ""/*this.sortDataValues(data.dataValues)*/, openReport: true, id : eventID,
 	getObject : JSON.stringify(data) }, function(){
 		//console.log("Hva skjer?");
+		console.log("Data wtF??", data);
 		console.log("Henter entry from doctor");
 		console.log(this.state.getObject);
 	}));
@@ -204,8 +236,78 @@ getEvent(eventID){
 
 }
 
+postNewReport(){
+	Api.getMe().then(data => {
+    this.setState({ orgUnit: data.teiSearchOrganisationUnits[0].id});
+      Api.getInstanceAndEnrollment(this.state.orgUnit).then(data => {
+        this.setInstanceAndEnrollment(data.events);
+      });
+    });
+}
+
+setInstanceAndEnrollment(reports) {
+
+    // FUNGERER IKKE HVIS HAN IKKE HAR RAPPORT FRA FØR
+    for (var i = 0; i < reports.length; i++){
+      if (reports[i].storedBy === this.state.username){
+        this.setState({ reports: reports, instance: reports[i].trackedEntityInstance,
+          enrollment: reports[i].enrollment });
+          break;
+        }
+      }
+
+
+    //  console.log("Instance", this.state.instance, " // enrollment", this.state.enrollment);
+    	var date = new Date();
+    	var day = date.getDay();
+    	var month = date.getMonth();
+    	var year = date.getYear();
+
+
+    	if(day<10) {
+    		day = '0'+day
+		} 
+
+		if(month<10) {
+    		month = '0'+month
+		} 
+
+		var date = year+"-"+month+"-"+day;
+		/*var fucker = new Array(7);
+		for(var i = 0; i < fucker.length; i++){
+			fucker[i] = {created: "", dateElement: "", lastUpdated: "", providedElseWhere: false, storedBy: "Cactus Jack", value: 2};
+		}*/
+
+		console.log("OrgUnit", this.state.orgUnit);
+		console.log("trackedEntityInstance", this.state.instance);
+      const event = {
+      	events:  [
+      	{
+        dataValues: [],
+        enrollment: this.state.enrollment,
+        eventDate: date,
+        notes: [{value: "DES"}],
+        orgUnit: this.state.orgUnit,
+        program: "r6qGL4AmFV4", // Hardkoda men det e gucci
+        programStage: "ZJ9TrNgrtfb",  // Hardkoda men det e gucci
+        status: "ACTIVE", // Hardkoda men det e gucci
+        trackedEntityInstance: this.state.instance
+    	}
+    	]
+      }
+
+      console.log(event);
+
+      Api.postEvent(event).then(res => {
+        console.log("Driten e posta fam. Sjekk plass 0 i events som blir printa under");
+        //this.setState({openReport: true});
+        console.log(res);
+        console.log(res.response.importSummaries[0].reference);
+        this.getEvent(res.response.importSummaries[0].reference);
+        //console.log("Skal være event id her", response);
+      });
+    };
 sortDataValues(array){
-	console.log(array);
 	if(!array.length === 7){
 		return array;
 	}else{
@@ -230,7 +332,7 @@ lessThan7(data){
 		return data.dataValues.length === 7;
 	}
 
-	console.log("Logged in as doctor", data.storedBy);
+	//console.log("Logged in as doctor", data.storedBy);
 	//if(data.storedBy === this.state.username){
 		return data.storedBy === this.state.username && data.dataValues.length === 7;
 	//}
@@ -244,7 +346,7 @@ closeWindow() {
 
 
 render(){
-
+ const { classes } = this.props;
 if(!this.state.connectivity){
 	return(
 		<div>
@@ -290,6 +392,7 @@ if (this.state.openReport){
 		<input id="in" type="text" onChange={this.onChange.bind(this)} />
 		<button onClick={this.sortByName.bind(this)}>Sort by name</button>
 		<button onClick={this.sortByDate.bind(this)}>Sort by date</button>
+		<Button className={classes.buttons} onClick={() => this.postNewReport()} color="primary"> Create new (TEST) </Button>
 		<ul>{this.listItems}</ul>
 		</div>
 	);
@@ -297,4 +400,4 @@ if (this.state.openReport){
 
 }
 
-export default SearchBar;
+export default withStyles(styles)(SearchBar);

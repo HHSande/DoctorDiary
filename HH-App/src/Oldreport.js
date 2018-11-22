@@ -74,14 +74,14 @@ class Oldreport extends React.Component{
     this.focusIn = this.focusIn.bind(this);
     this.focusOut = this.focusOut.bind(this);
     this.printArray = this.printArray.bind(this);
-    this.postNewReport = this.postNewReport.bind(this);
+    //this.postNewReport = this.postNewReport.bind(this);
     this.setInstanceAndEnrollment = this.setInstanceAndEnrollment.bind(this);
     this.getEvent = this.getEvent.bind(this);
   };
 
 
   componentDidMount() {
-
+    console.log(this.props.report);
     console.log("Hva er report?", this.props.report);
     console.log("Skal ikke være undefined", this.props.data);
     this.setState({jsonObject: JSON.parse(this.props.report), data: this.props.data, notes: JSON.parse(this.props.report).notes});
@@ -278,6 +278,7 @@ focusOut(param, textfield){
   this.setState({clicked: false});
 }
 
+/*
 postNewReport() {
 
   Api.getMe().then(data => {
@@ -287,7 +288,7 @@ postNewReport() {
         this.setInstanceAndEnrollment(data.events);
       });
     });
-  }
+  }*/
 
   setInstanceAndEnrollment(reports) {
 
@@ -334,12 +335,12 @@ postNewReport() {
 
     render(){
       const { classes } = this.props;
-      if(this.state.data.length < 1){
+      /*if(this.state.data.length < 1){
         return(
           <div>
           <p>Fitte</p>
           </div>);
-        }
+        }*/
         return(
           <div className="tReport">
           <body>
@@ -390,7 +391,7 @@ postNewReport() {
           <div>
           <Button className={classes.buttons} onClick={this.saveChanges} color="primary"> Change </Button>
           <Button className={classes.buttons} onClick={this.props.handler} color="primary"> Close </Button>
-          <Button className={classes.buttons} onClick={() => this.postNewReport()} color="primary"> Create new (TEST) </Button>
+          
           </div>
           </Paper>
           </body>
