@@ -25,7 +25,10 @@ class SearchBar extends Component{
 			report: [],
 			id: "",
 			getObject: "",
-			connectivity: false
+			connectivity: navigator.onLine,
+			funcArray: [],
+			username: "",
+			officer: false
 		};
 
 		this.onChange = this.onChange.bind(this);
@@ -38,6 +41,7 @@ class SearchBar extends Component{
 		this.closeWindow = this.closeWindow.bind(this);
 		this.sortDataValues = this.sortDataValues.bind(this);
 		this.checkConnectivity = this.checkConnectivity.bind(this);
+		this.add1 = this.add1.bind(this);
 	}
 
 	createEntry(name, time){
@@ -52,6 +56,13 @@ class SearchBar extends Component{
 
 }*/
 componentDidMount(){
+
+	Api.getMe().then(data => {
+    this.setState({ username: data.userCredentials.username, officer: data.teiSearchOrganisationUnits.length > 1}, function(){
+    	console.log("Me data", data);
+    });
+    });
+
 	this.checkConnectivity();
 	setInterval(this.checkConnectivity, 3000);
 	console.log("Skjedde");
@@ -130,10 +141,31 @@ sortByDate(){
 }
 
 checkConnectivity(){
+	if(!this.state.connectivity){
+		console.log("Legger til i array grunnet ikke nett");
+		var temp = this.state.funcArray;
+		temp.push(this.add1);
+		this.setState({funcArray: temp});
+	}
+
+	if(this.state.connectivity && this.state.funcArray.length > 0){
+		var copy = this.state.funcArray.length;
+		for(var i = 0; i < copy; i++){
+			console.log("Printer");
+			console.log(copy.length);
+			console.log(this.state.funcArray.pop()(i));
+		}
+	}
+
 	if(this.state.connectivity !== navigator.onLine){
+		console.log("Endrer connectivity");
 		this.setState({connectivity: navigator.onLine});
 	}
 	
+}
+
+add1(param){
+	return param + 1;
 }
 filterName(name){
 	//window.open("https://www.w3schools.com");
@@ -164,6 +196,7 @@ getEvent(eventID){
 	Api.getEntryFromDoctor(eventID).then(data => this.setState({ report : this.sortDataValues(data.dataValues), openReport: true, id : eventID,
 	getObject : JSON.stringify(data) }, function(){
 		//console.log("Hva skjer?");
+		console.log("Henter entry from doctor");
 		console.log(this.state.getObject);
 	}));
 
@@ -172,6 +205,7 @@ getEvent(eventID){
 }
 
 sortDataValues(array){
+	console.log(array);
 	if(!array.length === 7){
 		return array;
 	}else{
@@ -191,8 +225,16 @@ sortDataValues(array){
 
 
 lessThan7(data){
-	console.log(data);
-	return data.dataValues.length === 7;
+	if(this.state.officer){
+		console.log("Logged in as officer");
+		return data.dataValues.length === 7;
+	}
+
+	console.log("Logged in as doctor", data.storedBy);
+	//if(data.storedBy === this.state.username){
+		return data.storedBy === this.state.username && data.dataValues.length === 7;
+	//}
+	
 }
 
 closeWindow() {

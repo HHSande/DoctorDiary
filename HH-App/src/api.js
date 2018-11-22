@@ -1,7 +1,7 @@
 // API CALLS
 
 
-var enc = "Basic " + window.btoa("CasperL"+":"+"District1-");
+var enc = "Basic " + window.btoa("BjarneB"+":"+"District1-");
 
 const dhis2 = {
   baseUrl: 'https://course.dhis2.org/dhis/api/29/',
@@ -90,8 +90,8 @@ const getMetaData = () => { // for doctors, orgUnits
 
 const getReports = () => { // pass orgUnit
 
-  console.log("Kjører")
-  return fetch(`${dhis2.baseUrl}events.json?program=r6qGL4AmFV4`, {
+  console.log("Kjører");
+  return fetch(`${dhis2.baseUrl}events.json?program=r6qGL4AmFV4&paging=false`, {
     method: 'GET',
     mode: 'cors',
     credentials: 'include',
@@ -153,6 +153,7 @@ const postEvent = event => {
 };
 
 const getEntryFromDoctor = eventID => {
+  console.log("Kjører");
   return fetch(`${dhis2.baseUrl}events/${eventID}`, {
     method: 'GET',
     credentials: 'include',
@@ -164,7 +165,8 @@ const getEntryFromDoctor = eventID => {
 }
 
 const getEvent = event => {
-  return fetch(`${dhis2.baseUrl}events?${event}`, {  //  Search for data element
+  console.log("HALLO??");
+  return fetch(`${dhis2.baseUrl}events?program=r6qGL4AmFV4`, {  //  Search for data element
     method: 'GET',
     mode: 'cors',
     credentials: 'include',
