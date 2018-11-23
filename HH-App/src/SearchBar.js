@@ -16,24 +16,24 @@ disse skal kunne sorteres.
 **/
 
 const styles = theme => ({
-  root: {
-    width: '80%',
-    margin:'0 auto',
-    marginTop: '1%',
-    overflowX: 'auto',
-  },
-  buttons: {
-    marginTop: '3%',
-    margin: '1 auto',
-    backgroundColor: '#3f51b5',
-    color: 'white',
-  },
-  textinput: {
-    marginTop:'2rem',
-    marginTop:'2rem',
-    margin:'0',
-    overflow: 'auto',
-  },
+	root: {
+		width: '80%',
+		margin:'0 auto',
+		marginTop: '1%',
+		overflowX: 'auto',
+	},
+	buttons: {
+		marginTop: '3%',
+		margin: '1 auto',
+		backgroundColor: '#3f51b5',
+		color: 'white',
+	},
+	textinput: {
+		marginTop:'2rem',
+		marginTop:'2rem',
+		margin:'0',
+		overflow: 'auto',
+	},
 
 
 });
@@ -60,7 +60,8 @@ class SearchBar extends Component{
 			orgUnit: "",
 			reports: [],
 			instance: "",
-			enrollment: ""
+			enrollment: "",
+			dataValueIDs: ["BIB2zYDYIJp", "CXL5mg5l0cv", "EZstOIjb7wN", "LoY92GDoDC6", "p5D5Y9x7yMc", "romAEndBlt4", "zrZADVnTtMa"],
 		};
 
 		this.onChange = this.onChange.bind(this);
@@ -74,7 +75,7 @@ class SearchBar extends Component{
 		this.sortDataValues = this.sortDataValues.bind(this);
 		this.checkConnectivity = this.checkConnectivity.bind(this);
 		this.add1 = this.add1.bind(this);
-    this.etellerannet = this.etellerannet.bind(this);
+		this.etellerannet = this.etellerannet.bind(this);
 	}
 
 	createEntry(name, time){
@@ -91,14 +92,15 @@ class SearchBar extends Component{
 componentDidMount(){
 
 	Api.getMe().then(data => {
-    this.setState({ username: data.userCredentials.username, officer: data.teiSearchOrganisationUnits.length > 1}, function(){
-    	console.log("Me data", data);
-    });
-    });
+		this.setState({ orgUnit: data.teiSearchOrganisationUnits[0].id, username: data.userCredentials.username, officer: data.teiSearchOrganisationUnits.length > 1}, function(){
+			console.log("Me data", data);
+		});
+	});
 
 	this.checkConnectivity();
 	setInterval(this.checkConnectivity, 3000);
 	console.log("Skjedde");
+
 	Api.getReports().then(data => {
 		console.log(data);
 		console.warn('REPORTS', data.events);
@@ -200,6 +202,8 @@ checkConnectivity(){
 add1(param){
 	return param + 1;
 }
+
+
 filterName(name){
 	//window.open("https://www.w3schools.com");
 	console.log(name);
@@ -225,250 +229,305 @@ toggleWindowPortal() {
 	//console.log("Etter: " + this.state.openWindow);
 }
 
+
 getEvent(eventID){
-	Api.getEntryFromDoctor(eventID).then(data => console.log(data) /* this.setState({ report : this.sortDataValues(data.dataValues), openReport: true, id : eventID,
-	getObject : JSON.stringify(data) })*/);
+	Api.getEntryFromDoctor(eventID).then(data => this.setState({ report : this.sortDataValues(data.dataValues), openReport: true, id : eventID,
+		getObject : JSON.stringify(data) }));
+	}
 
-
-
-}
-
-postNewReport(){
-	Api.getMe().then(data => {
-    this.setState({ orgUnit: data.teiSearchOrganisationUnits[0].id});
-      Api.getInstanceAndEnrollment(this.state.orgUnit).then(data => {
-        this.setInstanceAndEnrollment(data.events);
-      });
-    });
-}
-
-setInstanceAndEnrollment(reports) {
-
-    // FUNGERER IKKE HVIS HAN IKKE HAR RAPPORT FRA FØR
-    for (var i = 0; i < reports.length; i++){
-      if (reports[i].storedBy === this.state.username){
-        this.setState({ reports: reports, instance: reports[i].trackedEntityInstance,
-          enrollment: reports[i].enrollment });
-          break;
-        }
-      }
-
-
-    //  console.log("Instance", this.state.instance, " // enrollment", this.state.enrollment);
-    	var date = new Date();
-    	var day = date.getDay();
-    	var month = date.getMonth();
-    	var year = date.getYear();
-
-
-    	if(day<10) {
-    		day = '0'+day
-		}
-
-		if(month<10) {
-    		month = '0'+month
-		}
-
-		var date = year+"-"+month+"-"+day;
-		/*var fucker = new Array(7);
-		for(var i = 0; i < fucker.length; i++){
-			fucker[i] = {created: "", dateElement: "", lastUpdated: "", providedElseWhere: false, storedBy: "Cactus Jack", value: 2};
-		}*/
-
-		console.log("OrgUnit", this.state.orgUnit);
-		console.log("trackedEntityInstance", this.state.instance);
-      const event = {
-        dataValues: [],
-        enrollment: this.state.enrollment,
-        eventDate: date,
-        notes: [{value: "DES"}],
-        orgUnit: this.state.orgUnit,
-        program: "r6qGL4AmFV4", // Hardkoda men det e gucci
-        programStage: "ZJ9TrNgrtfb",  // Hardkoda men det e gucci
-        status: "ACTIVE", // Hardkoda men det e gucci
-        trackedEntityInstance: this.state.instance
-      }
-
-      console.log(event);
-      var eventID = "";
-      var baseUrl = Api.dhis2.baseUrl;
-      var headers = Api.headers;
-
-      Api.postEvent(event).then(res => {
-        console.log("Driten e posta fam. Sjekk plass 0 i events som blir printa under");
-        //this.setState({openReport: true});
-        //console.log(res);
-        eventID = res.response.importSummaries[0].reference;
-        //console.log(res.response.importSummaries[0].reference);
-        this.getEvent(res.response.importSummaries[0].reference);
-
-        const temp = {
-          dataValues: [
-                {
-                    "lastUpdated": "2018-11-23T10:19:04.273",
-                    "storedBy": "AkselJ",
-                    "created": "2018-11-23T09:39:22.795",
-                    "dataElement": "BIB2zYDYIJp",
-                    "value": "2123",
-                    "providedElsewhere": false
-                },
-                {
-                    "lastUpdated": "2018-11-21T19:35:23.098",
-                    "storedBy": "admin",
-                    "created": "2018-11-21T19:35:23.098",
-                    "dataElement": "CXL5mg5l0cv",
-                    "value": "1231208973108321",
-                    "providedElsewhere": false
-                }
-            ],
-          enrollment: this.state.enrollment,
-          eventDate: date,
-          notes: [{value: "DES PART 2"}],
-          orgUnit: this.state.orgUnit,
-          program: "r6qGL4AmFV4", // Hardkoda men det e gucci
-          programStage: "ZJ9TrNgrtfb",  // Hardkoda men det e gucci
-          status: "ACTIVE", // Hardkoda men det e gucci
-          trackedEntityInstance: this.state.instance
-        }
-
-        fetch(`${baseUrl}events/${eventID}`, {
-          method: 'PUT',
-          credentials: 'include',
-          mode: 'cors',
-          headers,
-          body: JSON.stringify(temp),
-        })
-        .catch(error => error)
-        .then(response => response.json());
-
-        console.log("BODY etter: ", temp);
-        this.getEvent(res.response.importSummaries[0].reference);
-        //console.log("Skal være event id her", response);
-      });
-
-
-
-    };
-
-
-sortDataValues(array){
-
-	if(!array.length === 7){
-		return array;
-	}else{
-		var ny = array.sort(function(a, b){
-			if (a.dataElement < b.dataElement){
-				return -1;
-			}
-			if (a.dataElement > b.dataElement){
-				return 1;
-			}
-			return 0;
+	postNewReport(){
+		Api.getInstanceAndEnrollment(this.state.orgUnit).then(data => {
+			this.setInstanceAndEnrollment(data.events);
 		});
-
-		return ny;
-	}
-}
-
-etellerannet(fucker){
-  this.getEvent(fucker.event)
-}
-
-lessThan7(data){
-	if(this.state.officer){
-		console.log("Logged in as officer");
-		return data.dataValues.length === 7;
 	}
 
-	//console.log("Logged in as doctor", data.storedBy);
-	//if(data.storedBy === this.state.username){
-		return data.storedBy === this.state.username && data.dataValues.length === 7;
-	//}
+	setInstanceAndEnrollment(reports) {
 
-}
+		// FUNGERER IKKE HVIS HAN IKKE HAR RAPPORT FRA FØR
+		for (var i = 0; i < reports.length; i++){
+			if (reports[i].storedBy === this.state.username){
+				this.setState({ reports: reports, instance: reports[i].trackedEntityInstance,
+					enrollment: reports[i].enrollment });
+					break;
+				}
+			}
 
-closeWindow() {
-	this.setState({openReport : false});
 
-}
+			//  console.log("Instance", this.state.instance, " // enrollment", this.state.enrollment);
+			var date = new Date();
+			var day = date.getDay();
+			var month = date.getMonth();
+			var year = date.getYear();
 
 
-render(){
- const { classes } = this.props;
-if(!this.state.connectivity){
-	return(
-		<div>
-		<p> VI HAR IKKE NETT :OOO </p>
-		</div>
-	);
-}
-if (this.state.openReport){
-  console.log("Åpnet vindu");
-  console.log("REPORT:", this.state.report);
-	return (
+			if(day<10) {
+				day = '0'+day
+			}
 
-		<NewWindow>
-		<Oldreport data={ this.state.report } handler = { this.closeWindow } eventID = { this.state.id } report = { this.state.getObject }/>
-		</NewWindow>
-	)
-}
+			if(month<10) {
+				month = '0'+month
+			}
 
-  console.log(this.state.openReport);
-	if(this.state.curr.length > 0 && this.state.getObject === ""){
-		console.log("Hei")
-		//console.log("Kjører");
-		this.listItems = this.state.curr.filter(this.lessThan7).map((fucker) =>
-		<TableRow onClick={() =>
-			this.getEvent(fucker.event)}>
-      <TableCell>{fucker.storedBy}</TableCell>
-      <TableCell numeric>{fucker.dueDate}</TableCell>
-      <TableCell numeric>{fucker.dueDate}</TableCell>
-      </TableRow>
-		);
+			var date = year+"-"+month+"-"+day;
+
+			const event = {
+				dataValues: [],
+				//enrollment: this.state.enrollment,
+				eventDate: date,
+				notes: [{value: "HELT NY RAPPORT POST2"}],
+				orgUnit: this.state.orgUnit,
+				program: "r6qGL4AmFV4", // Hardkoda men det e gucci
+				programStage: "ZJ9TrNgrtfb",  // Hardkoda men det e gucci
+				status: "ACTIVE", // Hardkoda men det e gucci
+				trackedEntityInstance: this.state.instance
+			}
+
+			console.log(event);
+			var eventID = "";
+			var baseUrl = Api.dhis2.baseUrl;
+			var headers = Api.headers;
+
+			Api.postEvent(event).then(res => {
+				console.log("Driten e posta fam. Sjekk plass 0 i events som blir printa under");
+				//this.setState({openReport: true});
+				//console.log(res);
+				eventID = res.response.importSummaries[0].reference;
+				console.log("EVENTID",res.response.importSummaries[0].reference);
+
+				var values = [7];
+
+				for (var i = 0; i < 7; i++){
+					values[i] = {
+						"dataElement": this.state.dataValueIDs[i],
+						"value": 0,
+					}
+				}
+
+				const temp = {
+					dataValues: values,
+					notes: [{value: "HELT NY RAPPORT PUT4"}],
+				}
+
+				fetch(`${baseUrl}events/${eventID}`, {
+					method: 'PUT',
+					credentials: 'include',
+					mode: 'cors',
+					headers,
+					body: JSON.stringify(temp),
+				})
+				.catch(error => error)
+				.then(this.getEvent(eventID));
+			});
+		};
+
+
+		// Sånn den burde være, men det funke selvsagt ikke
+		/*
+		postNewReport(){
+			Api.getTrackedEntityInstance(this.state.orgUnit, this.state.username)
+				.then(data => {
+					this.setState({enrollment: data.trackedEntityInstances[0].enrollments[0].enrollment,
+					instance: data.trackedEntityInstances[0].trackedEntityInstance},
+					() => {
+						this.setInstanceAndEnrollment();
+					});
+				});
+		}
+
+		setInstanceAndEnrollment() {
+
+
+				console.log("Instance", this.state.instance, " // enrollment", this.state.enrollment);
+				var date = new Date();
+				var day = date.getDay();
+				var month = date.getMonth();
+				var year = date.getYear();
+
+
+				if(day<10) {
+					day = '0'+day
+				}
+
+				if(month<10) {
+					month = '0'+month
+				}
+
+				var date = year+"-"+month+"-"+day;
+
+				const event = {
+					dataValues: [],
+					enrollment: this.state.enrollment,
+					eventDate: date,
+					notes: [{value: "HELT NY RAPPORT POST2"}],
+					orgUnit: this.state.orgUnit,
+					program: "r6qGL4AmFV4", // Hardkoda men det e gucci
+					programStage: "ZJ9TrNgrtfb",  // Hardkoda men det e gucci
+					status: "ACTIVE", // Hardkoda men det e gucci
+					trackedEntityInstance: this.state.instance
+				}
+
+				console.log("SKLGNSDKFGNMKLSD", this.state.instance);
+
+				var eventID = "";
+				var baseUrl = Api.dhis2.baseUrl;
+				var headers = Api.headers;
+
+				Api.postEvent(event).then(res => {
+
+					eventID = res.response.importSummaries[0].reference;
+
+					var values = [7];
+					for (var i = 0; i < values.length; i++){
+						values[i] = {
+							"dataElement": this.state.dataValueIDs[i],
+							"value": 0,
+						}
+					}
+
+					const newValues = {
+						dataValues: values,
+						notes: [{value: "TRU OM DEN BLE PUTA"}]
+					}
+
+					fetch(`${baseUrl}events/${eventID}`, {
+						method: 'PUT',
+						credentials: 'include',
+						mode: 'cors',
+						headers,
+						body: JSON.stringify(newValues),
+					})
+					.catch(error => error)
+					.then(this.getEvent(eventID));
+				});
+			};
+
+
+
+
+		*/
+
+
+		sortDataValues(array){
+
+			if(!array.length === 7){
+				return array;
+			}else{
+				var ny = array.sort(function(a, b){
+					if (a.dataElement < b.dataElement){
+						return -1;
+					}
+					if (a.dataElement > b.dataElement){
+						return 1;
+					}
+					return 0;
+				});
+
+				return ny;
+			}
+		}
+
+		etellerannet(fucker){
+			this.getEvent(fucker.event)
+		}
+
+		lessThan7(data){
+			if(this.state.officer){
+				console.log("Logged in as officer");
+				return data.dataValues.length === 7;
+			}
+
+			//console.log("Logged in as doctor", data.storedBy);
+			//if(data.storedBy === this.state.username){
+			return data.storedBy === this.state.username && data.dataValues.length === 7;
+			//}
+
+		}
+
+		closeWindow() {
+			this.setState({openReport : false});
+
+		}
+
+
+		render(){
+			const { classes } = this.props;
+
+			if(!this.state.connectivity){
+				console.log("HER 1");
+				return(
+					<div>
+					<p> VI HAR IKKE NETT :OOO </p>
+					</div>
+				);
+			}
+
+			if (this.state.openReport){
+				console.log("Åpnet vindu");
+				console.log("REPORT:", this.state.report);
+				return (
+
+					<NewWindow>
+					<Oldreport data={ this.state.report } handler = { this.closeWindow } eventID = { this.state.id } report = { this.state.getObject }/>
+					</NewWindow>
+				)
+			}
+
+			console.log(this.state.openReport);
+			if(this.state.curr.length > 0 && this.state.getObject === ""){
+				console.log("Hei")
+				//console.log("Kjører");
+				this.listItems = this.state.curr.filter(this.lessThan7).map((fucker) =>
+				<TableRow onClick={() =>
+					this.getEvent(fucker.event)}>
+					<TableCell>{fucker.storedBy}</TableCell>
+					<TableCell numeric>{fucker.dueDate}</TableCell>
+					<TableCell numeric>{fucker.dueDate}</TableCell>
+					</TableRow>
+				);
+
+			}
+
+			if(this.state.openWindow){
+				console.log("Vindu oppe");
+				return(
+					<Test>
+					<button onClick={() => this.setState({openWindow: false})}> Nytt vindu, hehe </button>
+					</Test>
+				);
+			}
+
+
+			//console.log("Her skal være false: " + this.state.openWindow);
+
+			return(
+				<div>
+				<Paper className={classes.root}>
+				<AppBar className={classes.root} position="static" color="primary">
+				<Toolbar>
+				<TextField type="text" onChange={this.onChange.bind(this)} className={classes.searchbar} variant="filled" margin="normal" placeholder="Search for report number..."/>
+				<Button className={classes.buttons} onClick={this.sortByName.bind(this)}>Sort by name</Button>
+				<Button className={classes.buttons} onClick={this.sortByDate.bind(this)}>Sort by date</Button>
+				<Button className={classes.buttons} onClick={() => this.postNewReport()} color="primary"> Create new (TEST) </Button>
+				</Toolbar>
+				</AppBar>
+				<Table>
+				<TableHead>
+				<TableRow>
+				<TableCell numeric > Submitted by</TableCell>
+				<TableCell>Report number</TableCell>
+				<TableCell numeric>Date</TableCell>
+				<TableCell numeric>Status</TableCell>
+				</TableRow>
+				</TableHead>
+				<TableBody>
+				{this.listItems}
+				</TableBody>
+				</Table>
+				</Paper>
+				</div>
+			);
+		}
 
 	}
 
-	if(this.state.openWindow){
-		console.log("Vindu oppe");
-		return(
-			<Test>
-			<button onClick={() => this.setState({openWindow: false})}> Nytt vindu, hehe </button>
-			</Test>
-		);
-	}
-
-
-	//console.log("Her skal være false: " + this.state.openWindow);
-
-	return(
-		<div>
-      <Paper className={classes.root}>
-        <AppBar className={classes.root} position="static" color="primary">
-          <Toolbar>
-            <TextField type="text" onChange={this.onChange.bind(this)} className={classes.searchbar} variant="filled" margin="normal" placeholder="Search for report number..."/>
-        		<Button className={classes.buttons} onClick={this.sortByName.bind(this)}>Sort by name</Button>
-        		<Button className={classes.buttons} onClick={this.sortByDate.bind(this)}>Sort by date</Button>
-        		<Button className={classes.buttons} onClick={() => this.postNewReport()} color="primary"> Create new (TEST) </Button>
-            </Toolbar>
-          </AppBar>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell numeric > Submitted by</TableCell>
-                  <TableCell>Report number</TableCell>
-                  <TableCell numeric>Date</TableCell>
-                  <TableCell numeric>Status</TableCell>
-                </TableRow>
-              </TableHead>
-            	<TableBody>
-              {this.listItems}
-              </TableBody>
-            </Table>
-      </Paper>
-		</div>
-	);
-}
-
-}
-
-export default withStyles(styles)(SearchBar);
+	export default withStyles(styles)(SearchBar);

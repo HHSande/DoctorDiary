@@ -19,7 +19,16 @@ const headersForMe = new Headers({  // brukes for api/me, fordi Content-Type ikk
   Accept: 'application/json',
 });
 
-
+const getTrackedEntityInstance = (orgUnit, username) => {
+  return fetch(`${dhis2.baseUrl}trackedEntityInstances?ou=${orgUnit}&program=r6qGL4AmFV4&?filter=enrollments.storedBy:eq:${username}&fields=*`, {
+    method: 'GET',
+    mode: 'cors',
+    credentials: 'include',
+    headers,
+  })
+  .catch(error => error)
+  .then(response => response.json());
+}
 
 const getMe = () => {
 
@@ -191,7 +200,8 @@ export default {
   dhis2,
   headers,
   getMe,
-  getInstanceAndEnrollment
+  getInstanceAndEnrollment,
+  getTrackedEntityInstance
 };
 
 

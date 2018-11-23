@@ -399,7 +399,7 @@ postNewReport() {
           </div>
           </form>
           <div>
-          <Button className={classes.buttons} onClick={this.saveChanges} color="primary"> Change </Button>
+          <Button className={classes.buttons} onClick={this.saveChanges} color="primary"> DEN HER BURDE VI KANSKJE FJERNE </Button>
           <Button className={classes.buttons} onClick={this.props.handler} color="primary"> Close </Button>
 
           </div>
