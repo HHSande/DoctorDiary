@@ -16,25 +16,56 @@ disse skal kunne sorteres.
 **/
 
 const styles = theme => ({
-	root: {
-		width: '80%',
-		margin:'0 auto',
-		marginTop: '1%',
-		overflowX: 'auto',
-	},
-	buttons: {
-		marginTop: '3%',
-		margin: '1 auto',
-		backgroundColor: '#3f51b5',
-		color: 'white',
-	},
-	textinput: {
-		marginTop:'2rem',
-		marginTop:'2rem',
-		margin:'0',
-		overflow: 'auto',
-	},
+  root: {
+    width: '80%',
+    margin:'0 auto',
+    marginTop: '1%',
+    overflowX: 'auto',
+  },
+  buttons: {
+    marginTop: '3%',
+    margin: '1 auto',
+    backgroundColor: '#3f51b5',
+  },
+  textinput: {
+    marginTop:'2rem',
+    marginTop:'2rem',
+    margin:'0',
+    overflow: 'auto',
+  },
+  app: {
+    padding: '0.35rem'
+  },
+  buttonapprove: {
+    margin: '1.25%' ,
+    backgroundColor:'#E6E6FA',
+  },
+  buttondecline: {
+    margin: '1.25%' ,
+    backgroundColor: '#E6E6FA',
+  },
+  buttonpending: {
+    margin: '1.25%' ,
+    backgroundColor:'#E6E6FA',
+  },
+  searchbar: {
+    width: '15rem',
+    border: '1rem',
+    backgroundColor: '#E6E6FA',
+    marginRight: '13%',
+    'placeholder': {
+      color: 'white',
+    },
+  },
+  tablealign: {
+    textAlign: '-webkit-auto',
 
+  },
+  tablecell: {
+    fontSize: '1rem',
+    textAlign: '-webkit-auto',
+
+  },
 
 });
 
@@ -479,7 +510,7 @@ getEvent(eventID){
 				this.listItems = this.state.curr.filter(this.lessThan7).map((fucker) =>
 				<TableRow onClick={() =>
 					this.getEvent(fucker.event)}>
-					<TableCell>{fucker.storedBy}</TableCell>
+					<TableCell className={classes.tablealign}>{fucker.storedBy}</TableCell>
 					<TableCell numeric>{fucker.dueDate}</TableCell>
 					<TableCell numeric>{fucker.dueDate}</TableCell>
 					</TableRow>
@@ -498,26 +529,26 @@ getEvent(eventID){
 
 
 			//console.log("Her skal være false: " + this.state.openWindow);
-
+      
 			return(
 				<div>
 				<Paper className={classes.root}>
-				<AppBar className={classes.root} position="static" color="primary">
+				<AppBar className={classes.app} position="static" color="primary">
 				<Toolbar>
 				<TextField type="text" onChange={this.onChange.bind(this)} className={classes.searchbar} variant="filled" margin="normal" placeholder="Search for report number..."/>
-				<Button className={classes.buttons} onClick={this.sortByName.bind(this)}>Sort by name</Button>
-				<Button className={classes.buttons} onClick={this.sortByDate.bind(this)}>Sort by date</Button>
-				<Button className={classes.buttons} onClick={() => this.postNewReport()} color="primary"> Create new (TEST) </Button>
+				<Button className={classes.buttonapprove} onClick={this.sortByName.bind(this)}>Sort by name</Button>
+				<Button className={classes.buttondecline} onClick={this.sortByDate.bind(this)}>Sort by date</Button>
+				<Button className={classes.buttonpending} onClick={() => this.postNewReport()} color="primary"> Create new (TEST) </Button>
 				</Toolbar>
 				</AppBar>
 				<Table>
 				<TableHead>
-				<TableRow>
-				<TableCell numeric > Submitted by</TableCell>
-				<TableCell>Report number</TableCell>
-				<TableCell numeric>Date</TableCell>
-				<TableCell numeric>Status</TableCell>
-				</TableRow>
+  				<TableRow className={classes.tablecell}>
+    				<TableCell className={classes.tablecell} numeric > Submitted by</TableCell>
+    				<TableCell className={classes.tablecell} >Report number</TableCell>
+    				<TableCell className={classes.tablecell} numeric>Date</TableCell>
+    				<TableCell className={classes.tablecell} numeric>Status</TableCell>
+  				</TableRow>
 				</TableHead>
 				<TableBody>
 				{this.listItems}

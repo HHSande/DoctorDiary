@@ -43,10 +43,10 @@ checkOfficer(){
     	);
   	}else{
   		return (
-  			<Doctorsinterface />
+  			<SearchBar />
   		);
   	}
-    
+
   }
 }
 
