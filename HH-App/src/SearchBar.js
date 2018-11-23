@@ -111,7 +111,7 @@ componentDidMount(){
 
 onChange(event){
 	var sum = [];
-	console.log("Hei");
+	console.log("Hei sendt med", event.target.value);
 	this.filter(event.target.value);
 
 }
@@ -123,8 +123,8 @@ sleep(ms) {
 
 
 filter(value){
-	console.log("Blir kalt?");
-	console.log(value);
+	console.log("Blir kalt?", value);
+	//console.log(value);
 	var sum = [];
 	for(var i = 0; i < this.state.dummyData.length; i++){
 		if(this.state.dummyData[i].storedBy.toLowerCase().startsWith(value)){
@@ -133,7 +133,7 @@ filter(value){
 			sum.push(this.state.dummyData[i]);
 		}
 	}
-	console.log(sum);
+	console.log("Array med navn som matchet", sum);
 	this.setState({curr: sum});
 
 }
@@ -473,8 +473,8 @@ getEvent(eventID){
 			}
 
 			console.log(this.state.openReport);
-			if(this.state.curr.length > 0 && this.state.getObject === ""){
-				console.log("Hei")
+			if(/*this.state.curr.length > 0 && */ this.state.getObject === ""){
+				//console.log("Hei")
 				//console.log("Kjører");
 				this.listItems = this.state.curr.filter(this.lessThan7).map((fucker) =>
 				<TableRow onClick={() =>

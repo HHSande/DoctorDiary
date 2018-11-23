@@ -19,7 +19,7 @@ VIKTIG
 [3] = Remarks/ Feedback/ Details of Challenges faced = LoY92GDoDC6
 [4] = Challanges faced other = p5D5Y9x7yMc
 [5] = "Challenges faced" = romAEndBlt4
-[6] = Approved/Rejected Current Status = zrZADVnTtMa
+[6] = Approved/Rejected Current Status = zrZADVnTtMa (Aksel har en annen kode)
 ***********************************************************************/
 const styles = theme => ({
   root: {
@@ -240,7 +240,7 @@ saveChanges(param, textfield) {
     return;
 
   }
-  console.log(temp[0]);
+  console.log("Er jeg undefined?", temp);
   var test = temp.dataValues;
   console.log("Test", test);
 
@@ -274,7 +274,8 @@ focusIn(){
 }
 
 focusOut(param, textfield){
-  console.log("Focus out");
+  console.log("Focus out", textfield);
+
   if(this.state.clicked){
     this.saveChanges(param, textfield);
   }
