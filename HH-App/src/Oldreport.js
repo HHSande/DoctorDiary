@@ -42,7 +42,20 @@ const styles = theme => ({
     overflow: 'auto',
     width: '60%',
     marginLeft: '20%',
-  }
+  },
+  buttonapprove: {
+    margin: '1.25%' ,
+    marginLeft: '10%',
+    backgroundColor:'#00ff00',
+  },
+  buttondecline: {
+    margin: '1.25%' ,
+    backgroundColor: '#CD5C5C',
+  },
+  buttonpending: {
+    margin: '1.25%' ,
+    backgroundColor:'#E6E6FA',
+  },
 
 });
 
@@ -88,7 +101,7 @@ class Oldreport extends React.Component{
   };
 
 
-  async componentDidMount() {
+  componentDidMount() {
 
 
     this.checkConnectivity();
@@ -178,42 +191,42 @@ checkConnectivity(){
     console.log("Connection endret seg");
     if(navigator.onLine){
       if(this.state.queue.length > 0){
-       var copy = this.state.queue.length;
-      for(var i = 0; i < copy; i++){
-        console.log("Kaller pop");
-        //console.log(copy.length);
-        console.log(this.state.queue.pop()());
-      }
+        var copy = this.state.queue.length;
+        for(var i = 0; i < copy; i++){
+          console.log("Kaller pop");
+          //console.log(copy.length);
+          console.log(this.state.queue.pop()());
+        }
 
-      this.setState({queue: [], connectivity: navigator.onLine});
+        this.setState({queue: [], connectivity: navigator.onLine});
       }
     }
-    
+
     this.setState({connectivity: navigator.onLine});
   }
-  
+
   /*
   if(!this.state.connectivity){
-    console.log("Legger til i array grunnet ikke nett");
-    var temp = this.state.funcArray;
-    temp.push(this.add1);
-    this.setState({funcArray: temp});
-  }
+  console.log("Legger til i array grunnet ikke nett");
+  var temp = this.state.funcArray;
+  temp.push(this.add1);
+  this.setState({funcArray: temp});
+}
 
-  if(this.state.connectivity && this.state.funcArray.length > 0){
-    var copy = this.state.funcArray.length;
-    for(var i = 0; i < copy; i++){
-      console.log("Printer");
-      console.log(copy.length);
-      console.log(this.state.funcArray.pop()(i));
-    }
-  }
+if(this.state.connectivity && this.state.funcArray.length > 0){
+var copy = this.state.funcArray.length;
+for(var i = 0; i < copy; i++){
+console.log("Printer");
+console.log(copy.length);
+console.log(this.state.funcArray.pop()(i));
+}
+}
 
-  if(this.state.connectivity !== navigator.onLine){
-    console.log("Endrer connectivity");
-    this.setState({connectivity: navigator.onLine});
-  }
-  */
+if(this.state.connectivity !== navigator.onLine){
+console.log("Endrer connectivity");
+this.setState({connectivity: navigator.onLine});
+}
+*/
 }
 
 handleInput(event, id){
@@ -242,6 +255,8 @@ printArray(array){
   }
   return str;
 }
+
+
 saveChanges(param, textfield) {
 
   // endrer objektet
@@ -307,14 +322,14 @@ saveChanges(param, textfield) {
 
   temp.dataValues = test;
   if(!this.state.connectivity){
-   /* var objToStore = {
-      eventId: this.props.eventID,
-      putInBody: temp, 
-    
+    /* var objToStore = {
+    eventId: this.props.eventID,
+    putInBody: temp,
+
   }*/
-    var q = this.state.queue;
-    console.log("La til kall i queue");
-    q.push(() => {fetch(`${baseUrl}events/${this.props.eventID}/${param}`, {
+  var q = this.state.queue;
+  console.log("La til kall i queue");
+  q.push(() => {fetch(`${baseUrl}events/${this.props.eventID}/${param}`, {
     method: 'PUT',
     credentials: 'include',
     mode: 'cors',
@@ -323,25 +338,25 @@ saveChanges(param, textfield) {
   })
   .catch(error => error)
   .then(response => response.json())});
-    this.setState({queue: q});
-    return;
-  }
+  this.setState({queue: q});
+  return;
+}
 
-  fetch(`${baseUrl}events/${this.props.eventID}/${param}`, {
-    method: 'PUT',
-    credentials: 'include',
-    mode: 'cors',
-    headers,
-    body: JSON.stringify(temp),
-  })
-  .catch(error => error)
-  .then(response => response.json());
+fetch(`${baseUrl}events/${this.props.eventID}/${param}`, {
+  method: 'PUT',
+  credentials: 'include',
+  mode: 'cors',
+  headers,
+  body: JSON.stringify(temp),
+})
+.catch(error => error)
+.then(response => response.json());
 
-  console.log("BODY etter: ", temp);
-  this.setState({jsonObject: temp});
-  //console.log(temp.dataValues[0].dataElement);
-  //console.log(this.state.textField1);
-  //temp.dataValues[0].dataElement = this.state.textField1;
+console.log("BODY etter: ", temp);
+this.setState({jsonObject: temp});
+//console.log(temp.dataValues[0].dataElement);
+//console.log(this.state.textField1);
+//temp.dataValues[0].dataElement = this.state.textField1;
 }
 
 focusIn(){
@@ -362,127 +377,135 @@ focusOut(param, textfield){
 /*
 postNewReport() {
 
-  Api.getMe().then(data => {
-    this.setState({ teiSearchOrganisationUnits: data.teiSearchOrganisationUnits[0].id,
-      username: data.userCredentials.username});
-      Api.getInstanceAndEnrollment(this.state.teiSearchOrganisationUnits).then(data => {
-        this.setInstanceAndEnrollment(data.events);
-      });
-    });
-  }*/
+Api.getMe().then(data => {
+this.setState({ teiSearchOrganisationUnits: data.teiSearchOrganisationUnits[0].id,
+username: data.userCredentials.username});
+Api.getInstanceAndEnrollment(this.state.teiSearchOrganisationUnits).then(data => {
+this.setInstanceAndEnrollment(data.events);
+});
+});
+}*/
 
-  setInstanceAndEnrollment(reports) {
-    console.log("piss");
-    // FUNGERER IKKE HVIS HAN IKKE HAR RAPPORT FRA FØR
-    for (var i = 0; i < reports.length; i++){
-      if (reports[i].storedBy === this.state.username){
-        this.setState({ reports: reports, instance: reports[i].trackedEntityInstance,
-          enrollment: reports[i].enrollment });
-          break;
-        }
+setInstanceAndEnrollment(reports) {
+  console.log("piss");
+  // FUNGERER IKKE HVIS HAN IKKE HAR RAPPORT FRA FØR
+  for (var i = 0; i < reports.length; i++){
+    if (reports[i].storedBy === this.state.username){
+      this.setState({ reports: reports, instance: reports[i].trackedEntityInstance,
+        enrollment: reports[i].enrollment });
+        break;
       }
+    }
 
 
     //  console.log("Instance", this.state.instance, " // enrollment", this.state.enrollment);
 
-      const event = {
-        dataValues: [],
-        enrollment: this.state.enrollment,
-        notes: [],
-        eventDate: "2018-11-22",
-        notes: [{value: "FUNKA DET?"}],
-        orgUnit: this.state.teiSearchOrganisationUnits,
-        program: "r6qGL4AmFV4", // Hardkoda men det e gucci
-        programStage: "ZJ9TrNgrtfb",  // Hardkoda men det e gucci
-        status: "ACTIVE", // Hardkoda men det e gucci
-        trackedEntityInstance: this.state.instance
-      }
-
-      console.log(event);
-
-      Api.postEvent(event).then(response => {
-        console.log("Driten e posta fam. Sjekk plass 0 i events som blir printa under");
-        this.getEvent();
-      });
-    };
-
-
-    getEvent = () => {
-      Api.getEvent("program=r6qGL4AmFV4").then(data => {
-        console.warn("Alle rapporter", data);
-      });
-    };
-
-
-    render(){
-      console.log("Kom hit først");
-        console.log("B");
-
-      const { classes } = this.props;
-      /*if(this.state.data.length < 1){
-        return(
-          <div>
-          <p>Fitte</p>
-          </div>);
-        }*/
-        if (this.state.jsonObject === null) {
-          return <div>Tom</div>;
-        }
-        return(
-          <div className="tReport">
-
-          <AppBar position="static" color="primary">
-          <Toolbar>
-          <Button color="inherit">Back</Button>
-          <Typography id="headliner" variant="h6" color="inherit">
-          Doctorsinterface
-          </Typography>
-          </Toolbar>
-          </AppBar>
-            <Paper className={classes.root}>
-              <form onSubmit={this.handleSubmit}>
-                <div>
-                  <TextField type="text" onFocus={this.focusIn} onBlur={() => this.focusOut("zrZADVnTtMa", this.state.data[6])} value={this.state.data[6].value}  label="Approved/Rejcted Current Status:" className={classes.textinput} onChange={(event) => this.handleInput(event, 6)}/>
-                </div>
-                <div>
-                  <TextField type="text" onFocus={this.focusIn} onBlur={() => this.focusOut("EZstOIjb7wN", this.state.data[2])} value={this.state.data[2].value} label="Anaesthesia provided to other cases:"className={classes.textinput} onChange={(event) => this.handleInput(event, 2)}/>
-                </div>
-                <div>
-                  <TextField multiline={true} type="text" onFocus={this.focusIn} onBlur={() => this.focusOut("romAEndBlt4", this.state.data[5])} value={this.state.data[5].value} label="Challenges faced:"
-                  className={classes.textinput} onChange={(event) => this.handleInput(event, 5)} rowsMax="7"/>
-                </div>
-                <div>
-                  <TextField type="text" onFocus={this.focusIn} onBlur={() => this.focusOut("CXL5mg5l0cv", this.state.data[1])} value={this.state.data[1].value} label="No of Emergency Cesearean Cases provided anaesthesia during night time (5PM - Morning):"className={classes.textinput} onChange={(event) => this.handleInput(event, 1)}/>
-                </div>
-                <div>
-                  <TextField type="text" onFocus={this.focusIn} onBlur={() => this.focusOut("BIB2zYDYIJp", this.state.data[0])} value={this.state.data[0].value} label="No TEST of Emergency Cesearean Cases provided anaesthesia during day till 5PM:"className={classes.textinput} onChange={(event) => this.handleInput(event, 0)}/>
-                </div>
-                <div>
-                  <TextField multiline={true} type="text" onFocus={this.focusIn} onBlur={() => this.focusOut("LoY92GDoDC6", this.state.data[3])} value={this.state.data[3].value} label="Remarks/ Feedback/ Details of Challenges faced:"
-                  className={classes.textinput} onChange={(event) => this.handleInput(event, 3)} rowsMax="7"/>
-                </div>
-                <div>
-                  <TextField multiline={true} type="text" onFocus={this.focusIn} onBlur={() => this.focusOut("p5D5Y9x7yMc", this.state.data[4])} value={this.state.data[4].value} label="Challanges faced other:"
-                  className={classes.textinput} onChange={(event) => this.handleInput(event, 4)} rowsMax="7"/>
-                </div>
-                <div>
-                  <TextField multiline={true} type="text"  value={this.printArray(this.state.notes)} label="Prev Notes"
-                  className={classes.textinput}/>
-                </div>
-                <div>
-                  <TextField multiline={true} type="text" onFocus={this.focusIn} onBlur={() => this.focusOut(7, null)} label="Notes:"
-                  className={classes.textinput} onChange={(event) => this.handleNoteInput(event, 7)} rowsMax="7"/>
-                </div>
-              </form>
-              <div>
-                <Button className={classes.buttons} onClick={this.saveChanges} color="primary"> DEN HER BURDE VI KANSKJE FJERNE </Button>
-                <Button className={classes.buttons} onClick={this.props.handler} color="primary"> Close </Button>
-
-              </div>
-            </Paper>
-          </div>
-        );
-      }
+    const event = {
+      dataValues: [],
+      enrollment: this.state.enrollment,
+      notes: [],
+      eventDate: "2018-11-22",
+      notes: [{value: "FUNKA DET?"}],
+      orgUnit: this.state.teiSearchOrganisationUnits,
+      program: "r6qGL4AmFV4", // Hardkoda men det e gucci
+      programStage: "ZJ9TrNgrtfb",  // Hardkoda men det e gucci
+      status: "ACTIVE", // Hardkoda men det e gucci
+      trackedEntityInstance: this.state.instance
     }
 
-    export default withStyles(styles)(Oldreport);
+    console.log(event);
+
+    Api.postEvent(event).then(response => {
+      console.log("Driten e posta fam. Sjekk plass 0 i events som blir printa under");
+      this.getEvent();
+    });
+  };
+
+
+  getEvent = () => {
+    Api.getEvent("program=r6qGL4AmFV4").then(data => {
+      console.warn("Alle rapporter", data);
+    });
+  };
+
+
+  render(){
+    console.log("Kom hit først");
+    console.log("B");
+
+    const { classes } = this.props;
+    /*if(this.state.data.length < 1){
+    return(
+    <div>
+    <p>Fitte</p>
+    </div>);
+  }*/
+  if (this.state.jsonObject === null) {
+    return <div>Tom</div>;
+  }
+  return(
+    <div className="tReport">
+
+    <AppBar position="static" color="primary">
+    <Toolbar>
+    <Button color="inherit">Back</Button>
+    <Typography id="headliner" variant="h6" color="inherit">
+    Doctorsinterface
+    </Typography>
+    </Toolbar>
+    </AppBar>
+    <Paper className={classes.root}>
+    <form onSubmit={this.handleSubmit}>
+    <div>
+    <TextField type="text" onFocus={this.focusIn} onBlur={() => this.focusOut("zrZADVnTtMa", this.state.data[6])} value={this.state.data[6].value}  label="Approved/Rejcted Current Status:" className={classes.textinput} onChange={(event) => this.handleInput(event, 6)}/>
+    </div>
+    <div>
+    <TextField type="text" onFocus={this.focusIn} onBlur={() => this.focusOut("EZstOIjb7wN", this.state.data[2])} value={this.state.data[2].value} label="Anaesthesia provided to other cases:"className={classes.textinput} onChange={(event) => this.handleInput(event, 2)}/>
+    </div>
+    <div>
+    <TextField multiline={true} type="text" onFocus={this.focusIn} onBlur={() => this.focusOut("romAEndBlt4", this.state.data[5])} value={this.state.data[5].value} label="Challenges faced:"
+    className={classes.textinput} onChange={(event) => this.handleInput(event, 5)} rowsMax="7"/>
+    </div>
+    <div>
+    <TextField type="text" onFocus={this.focusIn} onBlur={() => this.focusOut("CXL5mg5l0cv", this.state.data[1])} value={this.state.data[1].value} label="No of Emergency Cesearean Cases provided anaesthesia during night time (5PM - Morning):"className={classes.textinput} onChange={(event) => this.handleInput(event, 1)}/>
+    </div>
+    <div>
+    <TextField type="text" onFocus={this.focusIn} onBlur={() => this.focusOut("BIB2zYDYIJp", this.state.data[0])} value={this.state.data[0].value} label="No TEST of Emergency Cesearean Cases provided anaesthesia during day till 5PM:"className={classes.textinput} onChange={(event) => this.handleInput(event, 0)}/>
+    </div>
+    <div>
+    <TextField multiline={true} type="text" onFocus={this.focusIn} onBlur={() => this.focusOut("LoY92GDoDC6", this.state.data[3])} value={this.state.data[3].value} label="Remarks/ Feedback/ Details of Challenges faced:"
+    className={classes.textinput} onChange={(event) => this.handleInput(event, 3)} rowsMax="7"/>
+    </div>
+    <div>
+    <TextField multiline={true} type="text" onFocus={this.focusIn} onBlur={() => this.focusOut("p5D5Y9x7yMc", this.state.data[4])} value={this.state.data[4].value} label="Challanges faced other:"
+    className={classes.textinput} onChange={(event) => this.handleInput(event, 4)} rowsMax="7"/>
+    </div>
+    <div>
+    <TextField multiline={true} type="text"  value={this.printArray(this.state.notes)} label="Prev Notes"
+    className={classes.textinput}/>
+    </div>
+    <div>
+    <TextField multiline={true} type="text" onFocus={this.focusIn} onBlur={() => this.focusOut(7, null)} label="Notes:"
+    className={classes.textinput} onChange={(event) => this.handleNoteInput(event, 7)} rowsMax="7"/>
+    </div>
+    <div>
+    <TextField multiline={true} type="text" onFocus={this.focusIn} onBlur={() => this.focusOut(7, null)} label="Notes:"
+    className={classes.textinput} onChange={(event) => this.handleNoteInput(event, 7)} rowsMax="7"/>
+    </div>
+    <div>
+    <br />
+    <Button className={classes.buttonapprove} onClick={() => this.saveChanges("zrZADVnTtMa", 1)}>Accept</Button>
+    <Button className={classes.buttondecline} onClick={() => this.saveChanges("zrZADVnTtMa", 2)}>Reject</Button>
+    </div>
+    </form>
+    <div>
+    <Button className={classes.buttons} onClick={this.props.handler} color="primary"> Close </Button>
+
+    </div>
+    </Paper>
+    </div>
+  );
+}
+}
+
+export default withStyles(styles)(Oldreport);

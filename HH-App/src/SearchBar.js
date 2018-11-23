@@ -93,6 +93,7 @@ class SearchBar extends Component{
 			instance: "",
 			enrollment: "",
 			dataValueIDs: ["BIB2zYDYIJp", "CXL5mg5l0cv", "EZstOIjb7wN", "LoY92GDoDC6", "p5D5Y9x7yMc", "romAEndBlt4", "zrZADVnTtMa"],
+			loading: true
 		};
 
 		this.onChange = this.onChange.bind(this);
@@ -135,7 +136,7 @@ componentDidMount(){
 	Api.getReports().then(data => {
 		console.log(data);
 		console.warn('REPORTS', data.events);
-		this.setState({dummyData : data.events, curr: data.events});
+		this.setState({dummyData : data.events, curr: data.events, loading: false});
 		console.log("RAPPORTER: ", this.state.dummyData);
 	});
 }
@@ -266,7 +267,7 @@ getEvent(eventID){
 		getObject : JSON.stringify(data) }));
 	}
 
-	postNewReport(){
+/*	postNewReport(){
 		Api.getInstanceAndEnrollment(this.state.orgUnit).then(data => {
 			this.setInstanceAndEnrollment(data.events);
 		});
@@ -350,10 +351,10 @@ getEvent(eventID){
 				.then(this.getEvent(eventID));
 			});
 		};
-
+		*/
 
 		// Sånn den burde være, men det funke selvsagt ikke
-		/*
+
 		postNewReport(){
 			Api.getTrackedEntityInstance(this.state.orgUnit, this.state.username)
 				.then(data => {
@@ -397,7 +398,6 @@ getEvent(eventID){
 					trackedEntityInstance: this.state.instance
 				}
 
-				console.log("SKLGNSDKFGNMKLSD", this.state.instance);
 
 				var eventID = "";
 				var baseUrl = Api.dhis2.baseUrl;
@@ -408,7 +408,7 @@ getEvent(eventID){
 					eventID = res.response.importSummaries[0].reference;
 
 					var values = [7];
-					for (var i = 0; i < values.length; i++){
+					for (var i = 0; i < 7; i++){
 						values[i] = {
 							"dataElement": this.state.dataValueIDs[i],
 							"value": 0,
@@ -417,7 +417,7 @@ getEvent(eventID){
 
 					const newValues = {
 						dataValues: values,
-						notes: [{value: "TRU OM DEN BLE PUTA"}]
+						notes: [{value: "yung renzel"}]
 					}
 
 					fetch(`${baseUrl}events/${eventID}`, {
@@ -428,14 +428,9 @@ getEvent(eventID){
 						body: JSON.stringify(newValues),
 					})
 					.catch(error => error)
-					.then(this.getEvent(eventID));
+					.then(console.log("SE Her", this.getEvent(eventID)));
 				});
 			};
-
-
-
-
-		*/
 
 
 		sortDataValues(array){
@@ -488,6 +483,11 @@ getEvent(eventID){
 				);
 			}
 			*/
+
+			if (this.state.loading){
+				return (<div>Loading...</div>)
+			}
+
 			if (this.state.openReport){
 				console.log("Åpnet vindu");
 				console.log("REPORT:", this.state.report);
@@ -511,8 +511,9 @@ getEvent(eventID){
 					<TableCell numeric>{fucker.dueDate}</TableCell>
 					</TableRow>
 				);
-
 			}
+
+
 
 			if(this.state.openWindow){
 				console.log("Vindu oppe");
@@ -525,7 +526,7 @@ getEvent(eventID){
 
 
 			//console.log("Her skal være false: " + this.state.openWindow);
-      
+
 			return(
 				<div>
 				<Paper className={classes.root}>
