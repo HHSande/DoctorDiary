@@ -93,7 +93,7 @@ class SearchBar extends Component{
 			instance: "",
 			enrollment: "",
 			dataValueIDs: ["BIB2zYDYIJp", "CXL5mg5l0cv", "EZstOIjb7wN", "LoY92GDoDC6", "p5D5Y9x7yMc", "romAEndBlt4", "zrZADVnTtMa"],
-			loading: true
+			loading: true,
 		};
 
 		this.onChange = this.onChange.bind(this);
@@ -437,11 +437,14 @@ getEvent(eventID){
 
 			if(!array.length === 7){
 				return array;
-			}else{
+
+			} else {
 				var ny = array.sort(function(a, b){
+
 					if (a.dataElement < b.dataElement){
 						return -1;
 					}
+
 					if (a.dataElement > b.dataElement){
 						return 1;
 					}
@@ -503,12 +506,14 @@ getEvent(eventID){
 			if(/*this.state.curr.length > 0 && */ this.state.getObject === ""){
 				//console.log("Hei")
 				//console.log("Kjører");
+
+
 				this.listItems = this.state.curr.filter(this.lessThan7).map((fucker) =>
 				<TableRow onClick={() =>
 					this.getEvent(fucker.event)}>
 					<TableCell className={classes.tablealign}>{fucker.storedBy}</TableCell>
 					<TableCell numeric>{fucker.dueDate}</TableCell>
-					<TableCell numeric>{fucker.dueDate}</TableCell>
+					<TableCell numeric>{fucker.dataValues[6].value}</TableCell>
 					</TableRow>
 				);
 			}
@@ -542,7 +547,6 @@ getEvent(eventID){
 				<TableHead>
   				<TableRow className={classes.tablecell}>
     				<TableCell className={classes.tablecell} numeric > Submitted by</TableCell>
-    				<TableCell className={classes.tablecell} >Report number</TableCell>
     				<TableCell className={classes.tablecell} numeric>Date</TableCell>
     				<TableCell className={classes.tablecell} numeric>Status</TableCell>
   				</TableRow>

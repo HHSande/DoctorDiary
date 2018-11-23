@@ -45,7 +45,7 @@ const styles = theme => ({
   },
   buttonapprove: {
     margin: '1.25%' ,
-    marginLeft: '10%',
+    marginLeft: '20%',
     backgroundColor:'#00ff00',
   },
   buttondecline: {
@@ -467,17 +467,17 @@ setInstanceAndEnrollment(reports) {
     className={classes.textinput} onChange={(event) => this.handleInput(event, 5)} rowsMax="7"/>
     </div>
     <div>
-    <TextField type="text" onFocus={this.focusIn} onBlur={() => this.focusOut("CXL5mg5l0cv", this.state.data[1])} value={this.state.data[1].value} label="No of Emergency Cesearean Cases provided anaesthesia during night time (5PM - Morning):"className={classes.textinput} onChange={(event) => this.handleInput(event, 1)}/>
+    <TextField type="text" onFocus={this.focusIn} onBlur={() => this.focusOut("CXL5mg5l0cv", this.state.data[1])} value={this.state.data[1].value} label="Number of Emergency Cesearean Cases (NIGHTTIME):"className={classes.textinput} onChange={(event) => this.handleInput(event, 1)}/>
     </div>
     <div>
-    <TextField type="text" onFocus={this.focusIn} onBlur={() => this.focusOut("BIB2zYDYIJp", this.state.data[0])} value={this.state.data[0].value} label="No TEST of Emergency Cesearean Cases provided anaesthesia during day till 5PM:"className={classes.textinput} onChange={(event) => this.handleInput(event, 0)}/>
+    <TextField type="text" onFocus={this.focusIn} onBlur={() => this.focusOut("BIB2zYDYIJp", this.state.data[0])} value={this.state.data[0].value} label="Number of Emergency Cesearean Cases (DAYTIME):"className={classes.textinput} onChange={(event) => this.handleInput(event, 0)}/>
     </div>
     <div>
-    <TextField multiline={true} type="text" onFocus={this.focusIn} onBlur={() => this.focusOut("LoY92GDoDC6", this.state.data[3])} value={this.state.data[3].value} label="Remarks/ Feedback/ Details of Challenges faced:"
+    <TextField multiline={true} type="text" onFocus={this.focusIn} onBlur={() => this.focusOut("LoY92GDoDC6", this.state.data[3])} value={this.state.data[3].value} label="Challenges faced:"
     className={classes.textinput} onChange={(event) => this.handleInput(event, 3)} rowsMax="7"/>
     </div>
     <div>
-    <TextField multiline={true} type="text" onFocus={this.focusIn} onBlur={() => this.focusOut("p5D5Y9x7yMc", this.state.data[4])} value={this.state.data[4].value} label="Challanges faced other:"
+    <TextField multiline={true} type="text" onFocus={this.focusIn} onBlur={() => this.focusOut("p5D5Y9x7yMc", this.state.data[4])} value={this.state.data[4].value} label="Other remarks:"
     className={classes.textinput} onChange={(event) => this.handleInput(event, 4)} rowsMax="7"/>
     </div>
     <div>
@@ -489,11 +489,7 @@ setInstanceAndEnrollment(reports) {
     className={classes.textinput} onChange={(event) => this.handleNoteInput(event, 7)} rowsMax="7"/>
     </div>
     <div>
-    <TextField multiline={true} type="text" onFocus={this.focusIn} onBlur={() => this.focusOut(7, null)} label="Notes:"
-    className={classes.textinput} onChange={(event) => this.handleNoteInput(event, 7)} rowsMax="7"/>
-    </div>
-    <div>
-    <br />
+    <br /><br />
     <Button className={classes.buttonapprove} onClick={() => this.saveChanges("zrZADVnTtMa", 1)}>Accept</Button>
     <Button className={classes.buttondecline} onClick={() => this.saveChanges("zrZADVnTtMa", 2)}>Reject</Button>
     </div>

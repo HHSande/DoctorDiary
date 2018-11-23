@@ -1,7 +1,7 @@
 // API CALLS
 
 
-var enc = "Basic " + window.btoa("AkselJ"+":"+"District1-");
+var enc = "Basic " + window.btoa("CasperL"+":"+"District1-");
 
 const dhis2 = {
   baseUrl: 'https://course.dhis2.org/dhis/api/29/',
