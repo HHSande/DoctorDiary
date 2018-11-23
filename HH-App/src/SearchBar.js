@@ -3,9 +3,10 @@ import Test from './Test.js';
 import Api from './api.js';
 import NewWindow from 'react-new-window';
 import Oldreport from './Oldreport.js';
-import { Paper, TextField, Input, MuiThemeProvider, AppBar, Button, Toolbar, Typography } from '@material-ui/core/';
+import { TableCell, Table, TableHead, TableBody, TableRow, Paper, TextField, Input, MuiThemeProvider, AppBar, Button, Toolbar, Typography } from '@material-ui/core/';
 import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
+import DHOTable from './DHOTable.js'
 /**
 Lagre doktorene i objekter, hvor de har en array av sine reports?
 Lage en objekt for reports, som har dato og content i seg?
@@ -73,6 +74,7 @@ class SearchBar extends Component{
 		this.sortDataValues = this.sortDataValues.bind(this);
 		this.checkConnectivity = this.checkConnectivity.bind(this);
 		this.add1 = this.add1.bind(this);
+    this.etellerannet = this.etellerannet.bind(this);
 	}
 
 	createEntry(name, time){
@@ -192,7 +194,7 @@ checkConnectivity(){
 		console.log("Endrer connectivity");
 		this.setState({connectivity: navigator.onLine});
 	}
-	
+
 }
 
 add1(param){
@@ -224,13 +226,8 @@ toggleWindowPortal() {
 }
 
 getEvent(eventID){
-	Api.getEntryFromDoctor(eventID).then(data => this.setState({ report : ""/*this.sortDataValues(data.dataValues)*/, openReport: true, id : eventID,
-	getObject : JSON.stringify(data) }, function(){
-		//console.log("Hva skjer?");
-		console.log("Data wtF??", data);
-		console.log("Henter entry from doctor");
-		console.log(this.state.getObject);
-	}));
+	Api.getEntryFromDoctor(eventID).then(data => console.log(data) /* this.setState({ report : this.sortDataValues(data.dataValues), openReport: true, id : eventID,
+	getObject : JSON.stringify(data) })*/);
 
 
 
@@ -266,11 +263,11 @@ setInstanceAndEnrollment(reports) {
 
     	if(day<10) {
     		day = '0'+day
-		} 
+		}
 
 		if(month<10) {
     		month = '0'+month
-		} 
+		}
 
 		var date = year+"-"+month+"-"+day;
 		/*var fucker = new Array(7);
@@ -281,8 +278,6 @@ setInstanceAndEnrollment(reports) {
 		console.log("OrgUnit", this.state.orgUnit);
 		console.log("trackedEntityInstance", this.state.instance);
       const event = {
-      	events:  [
-      	{
         dataValues: [],
         enrollment: this.state.enrollment,
         eventDate: date,
@@ -292,22 +287,72 @@ setInstanceAndEnrollment(reports) {
         programStage: "ZJ9TrNgrtfb",  // Hardkoda men det e gucci
         status: "ACTIVE", // Hardkoda men det e gucci
         trackedEntityInstance: this.state.instance
-    	}
-    	]
       }
 
       console.log(event);
+      var eventID = "";
+      var baseUrl = Api.dhis2.baseUrl;
+      var headers = Api.headers;
 
       Api.postEvent(event).then(res => {
         console.log("Driten e posta fam. Sjekk plass 0 i events som blir printa under");
         //this.setState({openReport: true});
-        console.log(res);
-        console.log(res.response.importSummaries[0].reference);
+        //console.log(res);
+        eventID = res.response.importSummaries[0].reference;
+        //console.log(res.response.importSummaries[0].reference);
+        this.getEvent(res.response.importSummaries[0].reference);
+
+        const temp = {
+          dataValues: [
+                {
+                    "lastUpdated": "2018-11-23T10:19:04.273",
+                    "storedBy": "AkselJ",
+                    "created": "2018-11-23T09:39:22.795",
+                    "dataElement": "BIB2zYDYIJp",
+                    "value": "2123",
+                    "providedElsewhere": false
+                },
+                {
+                    "lastUpdated": "2018-11-21T19:35:23.098",
+                    "storedBy": "admin",
+                    "created": "2018-11-21T19:35:23.098",
+                    "dataElement": "CXL5mg5l0cv",
+                    "value": "1231208973108321",
+                    "providedElsewhere": false
+                }
+            ],
+          enrollment: this.state.enrollment,
+          eventDate: date,
+          notes: [{value: "DES PART 2"}],
+          orgUnit: this.state.orgUnit,
+          program: "r6qGL4AmFV4", // Hardkoda men det e gucci
+          programStage: "ZJ9TrNgrtfb",  // Hardkoda men det e gucci
+          status: "ACTIVE", // Hardkoda men det e gucci
+          trackedEntityInstance: this.state.instance
+        }
+
+        fetch(`${baseUrl}events/${eventID}`, {
+          method: 'PUT',
+          credentials: 'include',
+          mode: 'cors',
+          headers,
+          body: JSON.stringify(temp),
+        })
+        .catch(error => error)
+        .then(response => response.json());
+
+        console.log("BODY etter: ", temp);
         this.getEvent(res.response.importSummaries[0].reference);
         //console.log("Skal være event id her", response);
       });
+
+
+
     };
+
+
 sortDataValues(array){
+
 	if(!array.length === 7){
 		return array;
 	}else{
@@ -322,9 +367,12 @@ sortDataValues(array){
 		});
 
 		return ny;
-	}	
+	}
 }
 
+etellerannet(fucker){
+  this.getEvent(fucker.event)
+}
 
 lessThan7(data){
 	if(this.state.officer){
@@ -336,7 +384,7 @@ lessThan7(data){
 	//if(data.storedBy === this.state.username){
 		return data.storedBy === this.state.username && data.dataValues.length === 7;
 	//}
-	
+
 }
 
 closeWindow() {
@@ -355,22 +403,27 @@ if(!this.state.connectivity){
 	);
 }
 if (this.state.openReport){
-
-
+  console.log("Åpnet vindu");
+  console.log("REPORT:", this.state.report);
 	return (
+
 		<NewWindow>
 		<Oldreport data={ this.state.report } handler = { this.closeWindow } eventID = { this.state.id } report = { this.state.getObject }/>
 		</NewWindow>
-
 	)
 }
 
+  console.log(this.state.openReport);
 	if(this.state.curr.length > 0 && this.state.getObject === ""){
 		console.log("Hei")
 		//console.log("Kjører");
 		this.listItems = this.state.curr.filter(this.lessThan7).map((fucker) =>
-		<li onClick={() =>
-			this.getEvent(fucker.event)}>{fucker.storedBy + " " + fucker.dueDate /* + " " + this.orderDataValues(fucker.dataValues)*/ }</li>
+		<TableRow onClick={() =>
+			this.getEvent(fucker.event)}>
+      <TableCell>{fucker.storedBy}</TableCell>
+      <TableCell numeric>{fucker.dueDate}</TableCell>
+      <TableCell numeric>{fucker.dueDate}</TableCell>
+      </TableRow>
 		);
 
 	}
@@ -389,11 +442,29 @@ if (this.state.openReport){
 
 	return(
 		<div>
-		<input id="in" type="text" onChange={this.onChange.bind(this)} />
-		<button onClick={this.sortByName.bind(this)}>Sort by name</button>
-		<button onClick={this.sortByDate.bind(this)}>Sort by date</button>
-		<Button className={classes.buttons} onClick={() => this.postNewReport()} color="primary"> Create new (TEST) </Button>
-		<ul>{this.listItems}</ul>
+      <Paper className={classes.root}>
+        <AppBar className={classes.root} position="static" color="primary">
+          <Toolbar>
+            <TextField type="text" onChange={this.onChange.bind(this)} className={classes.searchbar} variant="filled" margin="normal" placeholder="Search for report number..."/>
+        		<Button className={classes.buttons} onClick={this.sortByName.bind(this)}>Sort by name</Button>
+        		<Button className={classes.buttons} onClick={this.sortByDate.bind(this)}>Sort by date</Button>
+        		<Button className={classes.buttons} onClick={() => this.postNewReport()} color="primary"> Create new (TEST) </Button>
+            </Toolbar>
+          </AppBar>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell numeric > Submitted by</TableCell>
+                  <TableCell>Report number</TableCell>
+                  <TableCell numeric>Date</TableCell>
+                  <TableCell numeric>Status</TableCell>
+                </TableRow>
+              </TableHead>
+            	<TableBody>
+              {this.listItems}
+              </TableBody>
+            </Table>
+      </Paper>
 		</div>
 	);
 }

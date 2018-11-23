@@ -1,0 +1,40 @@
+.viewButtons button{
+  maxWidth: 400;
+  margin: '0 auto 10px';
+  width: 25%;
+  padding: 5% 5%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 5%;
+  border-radius: 8px;
+  font-size: 120%;
+
+}
+.viewButtons h2{
+  color: white;
+}
+.previousButton{
+  background-color: lightblue;
+}
+.todayButton{
+  background-color: green;
+}
+.viewButtons button:hover{
+
+}
+.viewButtons button:active {
+
+  box-shadow: 0 5px #666;
+  transform: translateY(4px);
+}
+
+.viewButtons{
+  background-color: #1d5288;
+}
+body{
+  background-color: #1d5288;
+}

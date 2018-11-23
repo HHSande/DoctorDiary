@@ -65,6 +65,8 @@ class Oldreport extends React.Component{
       enrollment: "",
       teiSearchOrganisationUnits: "",
       username: "",
+      tester: '',
+
 
 
     };
@@ -80,11 +82,12 @@ class Oldreport extends React.Component{
   };
 
 
-  componentDidMount() {
-    console.log(this.props.report);
-    console.log("Hva er report?", this.props.report);
-    console.log("Skal ikke være undefined", this.props.data);
+  async componentDidMount() {
+    console.log("Dette får vi sendt med - OLDREPORT", this.props.report);
+    console.log("Hva er report? - OLDREPORT", this.props.report);
+    console.log("Skal ikke være undefined - OLDREPORT", this.props.data);
     this.setState({jsonObject: JSON.parse(this.props.report), data: this.props.data, notes: JSON.parse(this.props.report).notes});
+    console.log("A");
     /*var json = JSON.parse(this.props.report);
     var notes = json.notes;
     console.log("NOTES");
@@ -159,6 +162,7 @@ this.setState({ textField3: event.target.value});
 }
 */
 handleInput(event, id){
+  //console.log("Kommer hit?");
   console.log("Ble kalt fra ", id);
   var copy = this.state.data;
   copy[id] = event.target.value;
@@ -291,7 +295,7 @@ postNewReport() {
   }*/
 
   setInstanceAndEnrollment(reports) {
-
+    console.log("piss");
     // FUNGERER IKKE HVIS HAN IKKE HAR RAPPORT FRA FØR
     for (var i = 0; i < reports.length; i++){
       if (reports[i].storedBy === this.state.username){
@@ -334,6 +338,9 @@ postNewReport() {
 
 
     render(){
+      console.log("Kom hit først");
+        console.log("B");
+
       const { classes } = this.props;
       /*if(this.state.data.length < 1){
         return(
@@ -341,6 +348,9 @@ postNewReport() {
           <p>Fitte</p>
           </div>);
         }*/
+        if (this.state.jsonObject === null) {
+          return <div>Tom</div>;
+        }
         return(
           <div className="tReport">
           <body>
@@ -391,7 +401,7 @@ postNewReport() {
           <div>
           <Button className={classes.buttons} onClick={this.saveChanges} color="primary"> Change </Button>
           <Button className={classes.buttons} onClick={this.props.handler} color="primary"> Close </Button>
-          
+
           </div>
           </Paper>
           </body>
