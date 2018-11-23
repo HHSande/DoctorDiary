@@ -69,7 +69,8 @@ class Oldreport extends React.Component{
       teiSearchOrganisationUnits: "",
       username: "",
       tester: '',
-
+      queue: [],
+      connectivity: navigator.onLine
 
 
     };
@@ -82,10 +83,16 @@ class Oldreport extends React.Component{
     //this.postNewReport = this.postNewReport.bind(this);
     this.setInstanceAndEnrollment = this.setInstanceAndEnrollment.bind(this);
     this.getEvent = this.getEvent.bind(this);
+    this.checkConnectivity = this.checkConnectivity.bind(this);
+
   };
 
 
   async componentDidMount() {
+
+
+    this.checkConnectivity();
+    setInterval(this.checkConnectivity, 3000);
     console.log("Dette får vi sendt med - OLDREPORT", this.props.report);
     console.log("Hva er report? - OLDREPORT", this.props.report);
     console.log("Skal ikke være undefined - OLDREPORT", this.props.data);
@@ -164,6 +171,51 @@ handleProblems(event) {
 this.setState({ textField3: event.target.value});
 }
 */
+
+checkConnectivity(){
+  console.log("Sjekker nettet");
+  if(this.state.connectivity !== navigator.onLine){
+    console.log("Connection endret seg");
+    if(navigator.onLine){
+      if(this.state.queue.length > 0){
+       var copy = this.state.queue.length;
+      for(var i = 0; i < copy; i++){
+        console.log("Kaller pop");
+        //console.log(copy.length);
+        console.log(this.state.queue.pop()());
+      }
+
+      this.setState({queue: [], connectivity: navigator.onLine});
+      }
+    }
+    
+    this.setState({connectivity: navigator.onLine});
+  }
+  
+  /*
+  if(!this.state.connectivity){
+    console.log("Legger til i array grunnet ikke nett");
+    var temp = this.state.funcArray;
+    temp.push(this.add1);
+    this.setState({funcArray: temp});
+  }
+
+  if(this.state.connectivity && this.state.funcArray.length > 0){
+    var copy = this.state.funcArray.length;
+    for(var i = 0; i < copy; i++){
+      console.log("Printer");
+      console.log(copy.length);
+      console.log(this.state.funcArray.pop()(i));
+    }
+  }
+
+  if(this.state.connectivity !== navigator.onLine){
+    console.log("Endrer connectivity");
+    this.setState({connectivity: navigator.onLine});
+  }
+  */
+}
+
 handleInput(event, id){
   //console.log("Kommer hit?");
   console.log("Ble kalt fra ", id);
@@ -252,7 +304,28 @@ saveChanges(param, textfield) {
       test[i].value = textfield;
     }
   }
+
   temp.dataValues = test;
+  if(!this.state.connectivity){
+   /* var objToStore = {
+      eventId: this.props.eventID,
+      putInBody: temp, 
+    
+  }*/
+    var q = this.state.queue;
+    console.log("La til kall i queue");
+    q.push(() => {fetch(`${baseUrl}events/${this.props.eventID}/${param}`, {
+    method: 'PUT',
+    credentials: 'include',
+    mode: 'cors',
+    headers,
+    body: JSON.stringify(temp),
+  })
+  .catch(error => error)
+  .then(response => response.json())});
+    this.setState({queue: q});
+    return;
+  }
 
   fetch(`${baseUrl}events/${this.props.eventID}/${param}`, {
     method: 'PUT',

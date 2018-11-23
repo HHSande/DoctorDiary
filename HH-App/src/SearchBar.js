@@ -106,7 +106,7 @@ class SearchBar extends Component{
 		this.sortDataValues = this.sortDataValues.bind(this);
 		this.checkConnectivity = this.checkConnectivity.bind(this);
 		this.add1 = this.add1.bind(this);
-		this.etellerannet = this.etellerannet.bind(this);
+
 	}
 
 	createEntry(name, time){
@@ -128,8 +128,8 @@ componentDidMount(){
 		});
 	});
 
-	this.checkConnectivity();
-	setInterval(this.checkConnectivity, 3000);
+	//this.checkConnectivity();
+	//setInterval(this.checkConnectivity, 3000);
 	console.log("Skjedde");
 
 	Api.getReports().then(data => {
@@ -457,10 +457,6 @@ getEvent(eventID){
 			}
 		}
 
-		etellerannet(fucker){
-			this.getEvent(fucker.event)
-		}
-
 		lessThan7(data){
 			if(this.state.officer){
 				console.log("Logged in as officer");
@@ -482,7 +478,7 @@ getEvent(eventID){
 
 		render(){
 			const { classes } = this.props;
-
+			/*
 			if(!this.state.connectivity){
 				console.log("HER 1");
 				return(
@@ -491,7 +487,7 @@ getEvent(eventID){
 					</div>
 				);
 			}
-
+			*/
 			if (this.state.openReport){
 				console.log("Åpnet vindu");
 				console.log("REPORT:", this.state.report);
