@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import ReactDOM from "react-dom";
-import { Paper, TextField, Input, MuiThemeProvider, AppBar, Button, Toolbar, Typography } from '@material-ui/core/';
+import { Paper, TextField, Input, MuiThemeProvider, AppBar, Button, Toolbar, Typography, MenuItem, Select } from '@material-ui/core/';
 import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 import Api from './api.js';
@@ -54,7 +54,7 @@ const styles = theme => ({
   },
   buttonpending: {
     margin: '1.25%' ,
-    backgroundColor:'#E6E6FA',
+    backgroundColor:'#f4cb42',
   },
 
 });
@@ -99,7 +99,6 @@ class Oldreport extends React.Component{
     this.checkConnectivity = this.checkConnectivity.bind(this);
     this.generateButtons = this.generateButtons.bind(this);
     this.interval = null;
-
   };
 
 
@@ -207,7 +206,7 @@ checkConnectivity(){
       this.setState({connectivity: navigator.onLine});
     }
 
-    
+
   }
 
   /*
@@ -234,9 +233,15 @@ this.setState({connectivity: navigator.onLine});
 */
 }
 
-handleInput(event, id){
+handleInput(event, id, numeric){
   //console.log("Kommer hit?");
   console.log("Ble kalt fra ", id);
+
+  if (isNaN(event.target.value) && numeric){
+      event.target.value = null;
+      return;
+  }
+
   var copy = this.state.data;
   copy[id] = event.target.value;
 
@@ -469,28 +474,47 @@ setInstanceAndEnrollment(reports) {
     <Paper className={classes.root}>
     <form onSubmit={this.handleSubmit}>
     <div>
-    <TextField type="text" onFocus={this.focusIn} onBlur={() => this.focusOut("zrZADVnTtMa", this.state.data[6])} value={this.state.data[6].value}  label="Approved/Rejcted Current Status:" className={classes.textinput} onChange={(event) => this.handleInput(event, 6)}/>
+    <TextField type="text" onFocus={this.focusIn} onBlur={() => this.focusOut("zrZADVnTtMa", this.state.data[6])} value={this.state.data[6].value}  label="Approved/Rejcted Current Status:" className={classes.textinput} onChange={(event) => this.handleInput(event, 6, true)}/>
     </div>
     <div>
-    <TextField type="text" onFocus={this.focusIn} onBlur={() => this.focusOut("EZstOIjb7wN", this.state.data[2])} value={this.state.data[2].value} label="Anaesthesia provided to other cases:"className={classes.textinput} onChange={(event) => this.handleInput(event, 2)}/>
+    <TextField type="text" onFocus={this.focusIn} onBlur={() => this.focusOut("EZstOIjb7wN", this.state.data[2])} value={this.state.data[2].value} label="Anaesthesia provided to other cases:"className={classes.textinput} onChange={(event) => this.handleInput(event, 2, true)}/>
     </div>
     <div>
     <TextField multiline={true} type="text" onFocus={this.focusIn} onBlur={() => this.focusOut("romAEndBlt4", this.state.data[5])} value={this.state.data[5].value} label="Challenges faced:"
-    className={classes.textinput} onChange={(event) => this.handleInput(event, 5)} rowsMax="7"/>
+    className={classes.textinput} onChange={(event) => this.handleInput(event, 5, true)} rowsMax="7"/>
     </div>
     <div>
-    <TextField type="text" onFocus={this.focusIn} onBlur={() => this.focusOut("CXL5mg5l0cv", this.state.data[1])} value={this.state.data[1].value} label="Number of Emergency Cesearean Cases (NIGHTTIME):"className={classes.textinput} onChange={(event) => this.handleInput(event, 1)}/>
+    <Select
+            value={this.state.data[5].value}
+            onFocus={this.focusIn}
+            onBlur={() => this.focusOut("romAEndBlt4", this.state.data[5])}
+            onChange={(event) => this.handleInput(event, 5, true)}
+            displayEmpty
+            className={classes.textinput}
+          >
+            <MenuItem value="">
+              <em>None</em>
+            </MenuItem>
+            <MenuItem value={1}>One</MenuItem>
+            <MenuItem value={2}>Two</MenuItem>
+            <MenuItem value={3}>Three</MenuItem>
+            <MenuItem value={4}>Four</MenuItem>
+            <MenuItem value={5}>Five</MenuItem>
+          </Select>
     </div>
     <div>
-    <TextField type="text" onFocus={this.focusIn} onBlur={() => this.focusOut("BIB2zYDYIJp", this.state.data[0])} value={this.state.data[0].value} label="Number of Emergency Cesearean Cases (DAYTIME):"className={classes.textinput} onChange={(event) => this.handleInput(event, 0)}/>
+    <TextField type="text" onFocus={this.focusIn} onBlur={() => this.focusOut("CXL5mg5l0cv", this.state.data[1])} value={this.state.data[1].value} label="Number of Emergency Cesearean Cases (NIGHTTIME):"className={classes.textinput} onChange={(event) => this.handleInput(event, 1, true)}/>
     </div>
     <div>
-    <TextField multiline={true} type="text" onFocus={this.focusIn} onBlur={() => this.focusOut("LoY92GDoDC6", this.state.data[3])} value={this.state.data[3].value} label="Challenges faced:"
-    className={classes.textinput} onChange={(event) => this.handleInput(event, 3)} rowsMax="7"/>
+    <TextField type="text" onFocus={this.focusIn} onBlur={() => this.focusOut("BIB2zYDYIJp", this.state.data[0])} value={this.state.data[0].value} label="Number of Emergency Cesearean Cases (DAYTIME):"className={classes.textinput} onChange={(event) => this.handleInput(event, 0, true)}/>
+    </div>
+    <div>
+    <TextField multiline={true} type="text" onFocus={this.focusIn} onBlur={() => this.focusOut("LoY92GDoDC6", this.state.data[3])} value={this.state.data[3].value} label="Remarks on challenges faced:"
+    className={classes.textinput} onChange={(event) => this.handleInput(event, 3, false)} rowsMax="7"/>
     </div>
     <div>
     <TextField multiline={true} type="text" onFocus={this.focusIn} onBlur={() => this.focusOut("p5D5Y9x7yMc", this.state.data[4])} value={this.state.data[4].value} label="Other remarks:"
-    className={classes.textinput} onChange={(event) => this.handleInput(event, 4)} rowsMax="7"/>
+    className={classes.textinput} onChange={(event) => this.handleInput(event, 4, false)} rowsMax="7"/>
     </div>
     <div>
     <TextField multiline={true} type="text"  value={this.printArray(this.state.notes)} label="Prev Notes"
@@ -500,10 +524,10 @@ setInstanceAndEnrollment(reports) {
     <TextField multiline={true} type="text" onFocus={this.focusIn} onBlur={() => this.focusOut(7, null)} label="Notes:"
     className={classes.textinput} onChange={(event) => this.handleNoteInput(event, 7)} rowsMax="7"/>
     </div>
-    
+
 
     {this.generateButtons()}
-   
+
     </form>
     <div>
     <Button className={classes.buttons} onClick={() => {

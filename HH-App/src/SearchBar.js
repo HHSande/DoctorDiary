@@ -36,6 +36,10 @@ const styles = theme => ({
   app: {
     padding: '0.35rem'
   },
+	buttonappbar: {
+    margin: '1.25%' ,
+    backgroundColor:'#E6E6FA',
+  },
   buttonapprove: {
     margin: '1.25%' ,
     backgroundColor:'#00ff00',
@@ -46,7 +50,7 @@ const styles = theme => ({
   },
   buttonpending: {
     margin: '1.25%' ,
-    backgroundColor:'#E6E6FA',
+    backgroundColor:'#f4b042',
   },
   searchbar: {
     width: '15rem',
@@ -126,7 +130,7 @@ componentDidMount(){
 		console.log("Dette er data", data);
 		//var tempArray = [];
 		for(var i = 0; i < data.events.length; i++){
-			
+
 			//tempArray.push(this.sortDataValues(data.events[i].dataValues));
 			data.events[i].dataValues = this.sortDataValues(data.events[i].dataValues);
 		}
@@ -466,15 +470,15 @@ getEvent(eventID){
 				<AppBar className={classes.app} position="static" color="primary">
 				<Toolbar>
 				<TextField type="text" onChange={this.onChange.bind(this)} className={classes.searchbar} variant="filled" margin="normal" placeholder="Search for report number..."/>
-				<Button className={classes.buttonapprove} onClick={this.sortByName.bind(this)}>Sort by name</Button>
-				<Button className={classes.buttondecline} onClick={this.sortByDate.bind(this)}>Sort by date</Button>
-				<Button className={classes.buttonpending} onClick={() => this.postNewReport()} color="primary"> Create new (TEST) </Button>
+				<Button className={classes.buttonappbar} onClick={this.sortByName.bind(this)}>Sort by name</Button>
+				<Button className={classes.buttonappbar} onClick={this.sortByDate.bind(this)}>Sort by date</Button>
+				<Button className={classes.buttonappbar} onClick={() => this.postNewReport()} color="primary"> Create new (TEST) </Button>
 				</Toolbar>
 				</AppBar>
 				<Table>
 				<TableHead>
   				<TableRow className={classes.tablecell}>
-    				<TableCell className={classes.tablecell} numeric > Submitted by</TableCell>
+    				<TableCell className={classes.tablecell} numeric>Submitted by</TableCell>
     				<TableCell className={classes.tablecell} numeric>Date</TableCell>
     				<TableCell className={classes.tablecell} numeric>Status</TableCell>
   				</TableRow>
