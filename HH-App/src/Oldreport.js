@@ -97,6 +97,8 @@ class Oldreport extends React.Component{
     this.setInstanceAndEnrollment = this.setInstanceAndEnrollment.bind(this);
     this.getEvent = this.getEvent.bind(this);
     this.checkConnectivity = this.checkConnectivity.bind(this);
+    this.generateButtons = this.generateButtons.bind(this);
+    this.interval = null;
 
   };
 
@@ -105,7 +107,7 @@ class Oldreport extends React.Component{
 
 
     this.checkConnectivity();
-    setInterval(this.checkConnectivity, 3000);
+    this.interval = setInterval(this.checkConnectivity, 3000);
     console.log("Dette får vi sendt med - OLDREPORT", this.props.report);
     console.log("Hva er report? - OLDREPORT", this.props.report);
     console.log("Skal ikke være undefined - OLDREPORT", this.props.data);
@@ -200,9 +202,12 @@ checkConnectivity(){
 
         this.setState({queue: [], connectivity: navigator.onLine});
       }
+    }else{
+      alert("You've lost connection to the internet. You can still make changes to the journal entry, and it will be sent to the server once you've regained your internet connection");
+      this.setState({connectivity: navigator.onLine});
     }
 
-    this.setState({connectivity: navigator.onLine});
+    
   }
 
   /*
@@ -385,7 +390,14 @@ this.setInstanceAndEnrollment(data.events);
 });
 });
 }*/
-
+generateButtons(){
+  if(this.props.role){
+    return <div><Button className={this.props.classes.buttonapprove} onClick={() => this.saveChanges("zrZADVnTtMa", 1)}>Accept</Button>
+    <Button className={this.props.classes.buttondecline} onClick={() => this.saveChanges("zrZADVnTtMa", 2)}>Reject</Button></div>
+  }else{
+    return <div><Button className={this.props.classes.buttonpending} onClick={() => this.saveChanges("zrZADVnTtMa", 3)}>Done</Button></div>
+  }
+}
 setInstanceAndEnrollment(reports) {
   console.log("piss");
   // FUNGERER IKKE HVIS HAN IKKE HAR RAPPORT FRA FØR
@@ -488,14 +500,17 @@ setInstanceAndEnrollment(reports) {
     <TextField multiline={true} type="text" onFocus={this.focusIn} onBlur={() => this.focusOut(7, null)} label="Notes:"
     className={classes.textinput} onChange={(event) => this.handleNoteInput(event, 7)} rowsMax="7"/>
     </div>
-    <div>
-    <br /><br />
-    <Button className={classes.buttonapprove} onClick={() => this.saveChanges("zrZADVnTtMa", 1)}>Accept</Button>
-    <Button className={classes.buttondecline} onClick={() => this.saveChanges("zrZADVnTtMa", 2)}>Reject</Button>
-    </div>
+    
+
+    {this.generateButtons()}
+   
     </form>
     <div>
-    <Button className={classes.buttons} onClick={this.props.handler} color="primary"> Close </Button>
+    <Button className={classes.buttons} onClick={() => {
+      clearInterval(this.interval);
+      this.props.handler();
+    }
+  } color="primary"> Close </Button>
 
     </div>
     </Paper>

@@ -38,11 +38,11 @@ const styles = theme => ({
   },
   buttonapprove: {
     margin: '1.25%' ,
-    backgroundColor:'#E6E6FA',
+    backgroundColor:'#00ff00',
   },
   buttondecline: {
     margin: '1.25%' ,
-    backgroundColor: '#E6E6FA',
+    backgroundColor: '#CD5C5C',
   },
   buttonpending: {
     margin: '1.25%' ,
@@ -97,16 +97,15 @@ class SearchBar extends Component{
 		};
 
 		this.onChange = this.onChange.bind(this);
-		//this.setInputState = this.setInputState.bind(this);
 		this.toggleWindowPortal = this.toggleWindowPortal.bind(this);
 		this.listItems = null;
 		this.getEvent = this.getEvent.bind(this);
-		//this.orderDataValues = this.orderDataValues.bind(this);
 		this.lessThan7 = this.lessThan7.bind(this);
 		this.closeWindow = this.closeWindow.bind(this);
 		this.sortDataValues = this.sortDataValues.bind(this);
 		this.checkConnectivity = this.checkConnectivity.bind(this);
-		this.add1 = this.add1.bind(this);
+		this.getStatus = this.getStatus.bind(this);
+		this.checkStatus = this.checkStatus.bind(this);
 
 	}
 
@@ -114,13 +113,6 @@ class SearchBar extends Component{
 		return {doctor_name: name, logged:time};
 	}
 
-	/*setInputState(input){
-	var workAround = this.state.dummyData;
-	workAround.push(input);
-	this.setState({dummyData: workAround, curr: workAround});
-	console.log("Tar lang tid");
-
-}*/
 componentDidMount(){
 
 	Api.getMe().then(data => {
@@ -128,12 +120,16 @@ componentDidMount(){
 			console.log("Me data", data);
 		});
 	});
-
-	//this.checkConnectivity();
-	//setInterval(this.checkConnectivity, 3000);
 	console.log("Skjedde");
 
 	Api.getReports().then(data => {
+		console.log("Dette er data", data);
+		//var tempArray = [];
+		for(var i = 0; i < data.events.length; i++){
+			
+			//tempArray.push(this.sortDataValues(data.events[i].dataValues));
+			data.events[i].dataValues = this.sortDataValues(data.events[i].dataValues);
+		}
 		console.log(data);
 		console.warn('REPORTS', data.events);
 		this.setState({dummyData : data.events, curr: data.events, loading: false});
@@ -147,12 +143,6 @@ onChange(event){
 	this.filter(event.target.value);
 
 }
-
-sleep(ms) {
-	return new Promise(resolve => setTimeout(resolve, ms));
-}
-
-
 
 filter(value){
 	console.log("Blir kalt?", value);
@@ -231,11 +221,6 @@ checkConnectivity(){
 
 }
 
-add1(param){
-	return param + 1;
-}
-
-
 filterName(name){
 	//window.open("https://www.w3schools.com");
 	console.log(name);
@@ -266,93 +251,6 @@ getEvent(eventID){
 	Api.getEntryFromDoctor(eventID).then(data => this.setState({ report : this.sortDataValues(data.dataValues), openReport: true, id : eventID,
 		getObject : JSON.stringify(data) }));
 	}
-
-/*	postNewReport(){
-		Api.getInstanceAndEnrollment(this.state.orgUnit).then(data => {
-			this.setInstanceAndEnrollment(data.events);
-		});
-	}
-
-	setInstanceAndEnrollment(reports) {
-
-		// FUNGERER IKKE HVIS HAN IKKE HAR RAPPORT FRA FØR
-		for (var i = 0; i < reports.length; i++){
-			if (reports[i].storedBy === this.state.username){
-				this.setState({ reports: reports, instance: reports[i].trackedEntityInstance,
-					enrollment: reports[i].enrollment });
-					break;
-				}
-			}
-
-
-			//  console.log("Instance", this.state.instance, " // enrollment", this.state.enrollment);
-			var date = new Date();
-			var day = date.getDay();
-			var month = date.getMonth();
-			var year = date.getYear();
-
-
-			if(day<10) {
-				day = '0'+day
-			}
-
-			if(month<10) {
-				month = '0'+month
-			}
-
-			var date = year+"-"+month+"-"+day;
-
-			const event = {
-				dataValues: [],
-				//enrollment: this.state.enrollment,
-				eventDate: date,
-				notes: [{value: "HELT NY RAPPORT POST2"}],
-				orgUnit: this.state.orgUnit,
-				program: "r6qGL4AmFV4", // Hardkoda men det e gucci
-				programStage: "ZJ9TrNgrtfb",  // Hardkoda men det e gucci
-				status: "ACTIVE", // Hardkoda men det e gucci
-				trackedEntityInstance: this.state.instance
-			}
-
-			console.log(event);
-			var eventID = "";
-			var baseUrl = Api.dhis2.baseUrl;
-			var headers = Api.headers;
-
-			Api.postEvent(event).then(res => {
-				console.log("Driten e posta fam. Sjekk plass 0 i events som blir printa under");
-				//this.setState({openReport: true});
-				//console.log(res);
-				eventID = res.response.importSummaries[0].reference;
-				console.log("EVENTID",res.response.importSummaries[0].reference);
-
-				var values = [7];
-
-				for (var i = 0; i < 7; i++){
-					values[i] = {
-						"dataElement": this.state.dataValueIDs[i],
-						"value": 0,
-					}
-				}
-
-				const temp = {
-					dataValues: values,
-					notes: [{value: "HELT NY RAPPORT PUT4"}],
-				}
-
-				fetch(`${baseUrl}events/${eventID}`, {
-					method: 'PUT',
-					credentials: 'include',
-					mode: 'cors',
-					headers,
-					body: JSON.stringify(temp),
-				})
-				.catch(error => error)
-				.then(this.getEvent(eventID));
-			});
-		};
-		*/
-
 		// Sånn den burde være, men det funke selvsagt ikke
 
 		postNewReport(){
@@ -434,8 +332,8 @@ getEvent(eventID){
 
 
 		sortDataValues(array){
-
-			if(!array.length === 7){
+			console.log("Dette får vi inn", array);
+			if(array === undefined || !array.length === 7){
 				return array;
 
 			} else {
@@ -451,14 +349,45 @@ getEvent(eventID){
 					return 0;
 				});
 
+				console.log("Sorterte array", ny);
 				return ny;
+			}
+		}
+
+		checkStatus(input){
+			console.log("Dette får vi fra approved section", input);
+			if(input === "1"){		//Approved
+				//return <Button className={this.props.classes.buttonapprove}>Accepted</Button>;
+				//console.log("Skal være approved");
+				return this.props.classes.buttonapprove;
+			}else if(input === "2"){	//Declined
+				//return <Button className={this.props.classes.buttondecline}>Declined</Button>
+				return this.props.classes.buttondecline;
+			}else if(input === "3"){	//Pending
+				return this.props.classes.buttonpending;
+			}else{
+				return this.props.classes.buttonpending;
+			}
+		}
+
+		getStatus(input){
+			if(input === "1"){		//Approved
+				//return <Button className={classes.buttonapprove}>Accepted</Button>;
+				return "Approved";
+			}else if(input === "2"){	//Declined
+				//return <Button className={classes.buttondecline}>Accepted</Button>
+				return "Decline";
+			}else if(input === "3"){	//Pending
+				return "Pending";
+			}else{
+				return "Not finished";
 			}
 		}
 
 		lessThan7(data){
 			if(this.state.officer){
 				console.log("Logged in as officer");
-				return data.dataValues.length === 7;
+				return data.dataValues.length >= 7;
 			}
 
 			//console.log("Logged in as doctor", data.storedBy);
@@ -497,7 +426,7 @@ getEvent(eventID){
 				return (
 
 					<NewWindow>
-					<Oldreport data={ this.state.report } handler = { this.closeWindow } eventID = { this.state.id } report = { this.state.getObject }/>
+					<Oldreport data={ this.state.report } handler = { this.closeWindow } eventID = { this.state.id } report = { this.state.getObject } role = {this.state.officer}/>
 					</NewWindow>
 				)
 			}
@@ -513,11 +442,10 @@ getEvent(eventID){
 					this.getEvent(fucker.event)}>
 					<TableCell className={classes.tablealign}>{fucker.storedBy}</TableCell>
 					<TableCell numeric>{fucker.dueDate}</TableCell>
-					<TableCell numeric>{fucker.dataValues[6].value}</TableCell>
+					<TableCell numeric><Button className={this.checkStatus(fucker.dataValues[6].value)}>{this.getStatus(fucker.dataValues[6].value)}</Button></TableCell>
 					</TableRow>
 				);
 			}
-
 
 
 			if(this.state.openWindow){
