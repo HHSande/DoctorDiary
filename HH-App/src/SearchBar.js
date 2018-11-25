@@ -91,22 +91,18 @@ class SearchBar extends Component{
 	constructor(props){
 		super(props);
 		this.state = {
-			textValue: "",
 			asc: false,
 			dec: false,
 			openWindow: false,
-			lestInn: false,
 			curr: [],
 			openReport: false,
 			report: [],
 			id: "",
 			getObject: "",
 			connectivity: navigator.onLine,
-			funcArray: [],
 			username: "",
 			officer: false,
 			orgUnit: "",
-			reports: [],
 			instance: "",
 			enrollment: "",
 			dataValueIDs: ["BIB2zYDYIJp", "CXL5mg5l0cv", "EZstOIjb7wN", "LoY92GDoDC6", "p5D5Y9x7yMc", "romAEndBlt4", "zrZADVnTtMa"],
@@ -119,27 +115,18 @@ class SearchBar extends Component{
 		this.lessThan7 = this.lessThan7.bind(this);
 		this.closeWindow = this.closeWindow.bind(this);
 		this.sortDataValues = this.sortDataValues.bind(this);
-		this.checkConnectivity = this.checkConnectivity.bind(this);
 		this.getStatus = this.getStatus.bind(this);
 		this.checkStatus = this.checkStatus.bind(this);
 		this.pullReports = this.pullReports.bind(this);
 		this.getCreateReportButton = this.getCreateReportButton.bind(this);
+		this.genericSort = this.genericSort.bind(this);
 	}
-
-
-	createEntry(name, time){
-		return {storedBy: name, logged:time};
-	}
-
 
 	componentDidMount(){
 
 		Api.getMe().then(data => {
-			this.setState({ orgUnit: data.teiSearchOrganisationUnits[0].id, username: data.userCredentials.username, officer: data.teiSearchOrganisationUnits.length > 1}, function(){
-				console.log("Me data", data);
-			});
+			this.setState({ orgUnit: data.teiSearchOrganisationUnits[0].id, username: data.userCredentials.username, officer: data.teiSearchOrganisationUnits.length > 1})
 		});
-		console.log("Skjedde");
 
 		this.pullReports();
 	}
@@ -147,24 +134,14 @@ class SearchBar extends Component{
 
 	pullReports(){
 		Api.getReports().then(data => {
-			console.log("Dette er data", data);
-			//var tempArray = [];
-			for(var i = 0; i < data.events.length; i++){
 
-				//tempArray.push(this.sortDataValues(data.events[i].dataValues));
+			for(var i = 0; i < data.events.length; i++){
 				data.events[i].dataValues = this.sortDataValues(data.events[i].dataValues);
-				console.log(data.events[i].dueDate);
 				var tempStorage = data.events[i].dueDate.split("T");
-				console.log(tempStorage[0]);
-				console.log(tempStorage[1]);
 				var stykkOm = tempStorage[0].split("-");
 				var nyTid = stykkOm[2] + "-" + stykkOm[1] + "-" + stykkOm[0];
-				console.log(nyTid);
 				var rakker = tempStorage[1].split(".");
-				console.log("Tid som blir satt" + tempStorage[0] + " " + rakker[0]);
 				data.events[i].dueDate = nyTid + " " + rakker[0];
-
-
 			}
 			this.setState({ curr: data.events, loading: false});
 		});
@@ -172,10 +149,7 @@ class SearchBar extends Component{
 
 
 	onChange(event){
-		var sum = [];
-		console.log("Hei sendt med", event.target.value);
 		this.filter(event.target.value);
-
 	}
 
 
@@ -192,20 +166,16 @@ class SearchBar extends Component{
 		this.setState({curr: sum});
 	}
 
-
-	sortByName(){
+	genericSort(objectValue){
 		var temp = this.state.curr.filter(this.lessThan7);
-		var ny = temp.sort(function(a, b){
-			if(a.storedBy === undefined || b.storedBy === undefined){
-				//console.log(a.storedBy + " " + b.storedBy);
+		var ny = temp.sort(function(a,b){
+			if(a[objectValue] === undefined || b[objectValue] === undefined){
 				return 0;
 			}
-			if (a.storedBy.toLowerCase() < b.storedBy.toLowerCase()){
-				//console.log("B større " + a.storedBy + " " + b.storedBy);
+			if (a[objectValue].toString().toLowerCase() < b[objectValue].toString().toLowerCase()){
 				return -1;
 			}
-			if (a.storedBy.toLowerCase() > b.storedBy.toLowerCase()){
-				//console.log("A større " + a.storedBy + " " + b.storedBy);
+			if (a[objectValue].toString().toLowerCase() > b[objectValue].toString().toLowerCase()){
 				return 1;
 			}
 			return 0;
@@ -213,7 +183,6 @@ class SearchBar extends Component{
 
 		if(!this.state.asc){
 			this.setState({curr: ny, asc: true, dec:false});
-
 		}else if(!this.state.dec){
 			this.setState({curr: ny.reverse(), asc:false, dec:true});
 		}
@@ -223,15 +192,12 @@ class SearchBar extends Component{
 		var temp = this.state.curr.filter(this.lessThan7);
 		var ny = temp.sort(function(a,b){
 			if(a.dataValues[6] === undefined || b.dataValues[6] === undefined){
-				console.log("Undefined " + a.dataValues[6] + " " + "med " + b.dataValues[6]);
 				return 0;
 			}
 
 			if(parseInt(a.dataValues[6].value) < parseInt(b.dataValues[6].value)){
-				console.log("A mindre " + a.dataValues[6].value + " " + "med " + b.dataValues[6].value);
 				return -1;
 			}else if(parseInt(a.dataValues[6].value) > parseInt(b.dataValues[6].value)){
-				console.log("A større " + a.dataValues[6].value + " " + "med " + b.dataValues[6].value);
 				return 1;
 			}
 			return 0;
@@ -242,58 +208,6 @@ class SearchBar extends Component{
 		}else if(!this.state.dec){
 			this.setState({curr: ny.reverse(), asc:false, dec:true});
 		}
-	}
-
-	sortByDate(){
-		var temp = this.state.curr.filter(this.lessThan7);
-		var ny = temp.sort(function(a, b){
-			console.log("A: " + a.dueDate + " " + "B: " + b.dueDate);
-			if (a.dueDate < b.dueDate){
-				return -1;
-			}
-			if (a.dueDate > b.dueDate){
-				return 1;
-			}
-			return 0;
-		});
-
-		if(!this.state.asc){
-			this.setState({curr: ny, asc: true, dec:false});
-		}else if(!this.state.dec){
-			this.setState({curr: ny.reverse(), asc:false, dec:true});
-		}
-	}
-
-
-	checkConnectivity(){
-		if(!this.state.connectivity){
-			console.log("Legger til i array grunnet ikke nett");
-			var temp = this.state.funcArray;
-			temp.push(this.add1);
-			this.setState({funcArray: temp});
-		}
-
-		if(this.state.connectivity && this.state.funcArray.length > 0){
-			var copy = this.state.funcArray.length;
-			for(var i = 0; i < copy; i++){
-				console.log("Printer");
-				console.log(copy.length);
-				console.log(this.state.funcArray.pop()(i));
-			}
-		}
-
-		if(this.state.connectivity !== navigator.onLine){
-			console.log("Endrer connectivity");
-			this.setState({connectivity: navigator.onLine});
-		}
-
-	}
-
-
-	filterName(name){
-		console.log(name);
-		document.getElementById("in").value = name;
-		this.filter(name.toLowerCase());
 	}
 
 
@@ -335,7 +249,6 @@ class SearchBar extends Component{
 
 		Api.postEvent(event).then(res => {
 
-			console.log("EVENTID:" , res);
 			eventID = res.response.importSummaries[0].reference;
 
 			var values = [7];
@@ -358,14 +271,12 @@ class SearchBar extends Component{
 				headers,
 				body: JSON.stringify(newValues),
 			})
-			.catch(error => error)
-			.then(console.log("SE Her", this.getEvent(eventID)));
+			.catch(error => error);
 		});
 	};
 
 
 	sortDataValues(array){
-		//console.log("Dette får vi inn", array);
 		if(array === undefined || !array.length === 7){
 			return array;
 
@@ -382,14 +293,12 @@ class SearchBar extends Component{
 				return 0;
 			});
 
-			console.log("Sorterte array", ny);
 			return ny;
 		}
 	}
 
 
 	checkStatus(input){
-		//console.log("Dette får vi fra approved section", input);
 		if(input === "1"){		//Approved
 			return this.props.classes.buttonapprove;
 
@@ -424,7 +333,6 @@ class SearchBar extends Component{
 
 	lessThan7(data){
 		if(this.state.officer){
-			console.log("Logged in as officer");
 			return data.dataValues.length >= 7;
 		}
 
@@ -455,9 +363,6 @@ class SearchBar extends Component{
 		}
 
 		if (this.state.openReport){
-			console.log("Åpnet vindu");
-			console.log("REPORT:", this.state.report);
-
 			return (
 				<NewWindow>
 				<Oldreport data={ this.state.report } handler = { this.closeWindow } eventID = { this.state.id } report = { this.state.getObject } role = {this.state.officer}/>
@@ -466,25 +371,15 @@ class SearchBar extends Component{
 		}
 
 		if (this.state.getObject === ""){
-			this.listItems = this.state.curr.filter(this.lessThan7).map((fucker) =>
+			this.listItems = this.state.curr.filter(this.lessThan7).map((report) =>
 			<TableRow onClick={() =>
-				this.getEvent(fucker.event)}>
-				<TableCell className={classes.tablealign}>{fucker.storedBy}</TableCell>
-				<TableCell numeric>{fucker.dueDate}</TableCell>
-				<TableCell numeric><Button className={this.checkStatus(fucker.dataValues[6].value)}>{this.getStatus(fucker.dataValues[6].value)}</Button></TableCell>
+				this.getEvent(report.event)}>
+				<TableCell className={classes.tablealign}>{report.storedBy}</TableCell>
+				<TableCell numeric>{report.dueDate}</TableCell>
+				<TableCell numeric><Button className={this.checkStatus(report.dataValues[6].value)}>{this.getStatus(report.dataValues[6].value)}</Button></TableCell>
 				</TableRow>
 			);
 		}
-
-		if(this.state.openWindow){
-			console.log("Vindu oppe");
-			return(
-				<Test>
-				<button onClick={() => this.setState({openWindow: false})}> Nytt vindu, hehe </button>
-				</Test>
-			);
-		}
-
 
 		return(
 			<div>
@@ -495,8 +390,8 @@ class SearchBar extends Component{
 			</Toolbar>
 			<Toolbar>
 			<TextField type="text" onChange={this.onChange.bind(this)} className={classes.searchbar} variant="filled" margin="normal" placeholder="Search by doctor"/>
-			<Button className={classes.buttonappbar} onClick={this.sortByName.bind(this)}>Sort by name</Button>
-			<Button className={classes.buttonappbar} onClick={this.sortByDate.bind(this)}>Sort by date</Button>
+			<Button className={classes.buttonappbar} onClick={() => this.genericSort("storedBy")}>Sort by name</Button>
+			<Button className={classes.buttonappbar} onClick={() => this.genericSort("dueDate")}>Sort by date</Button>
 			<Button className={classes.buttonappbar} onClick={this.sortByStatus.bind(this)}>Sort by status</Button>
 			{this.getCreateReportButton()}
 			</Toolbar>
