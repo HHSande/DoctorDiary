@@ -13,39 +13,43 @@ import Api from './api.js';
 
 
 class App extends Component {
-	constructor(props){
-		super(props);
-		this.state = {
-			officer: 100,
-		}
+  constructor(props){
+    super(props);
+    this.state = {
+      officer: 100,
+    }
 
-		this.checkOfficer = this.checkOfficer.bind(this);
-	};
+    this.checkOfficer = this.checkOfficer.bind(this);
+  };
 
-componentDidMount(){
-	this.checkOfficer();
-}
-checkOfficer(){
-	Api.getMe().then(data => {
-		this.setState({officer: data.teiSearchOrganisationUnits.length > 1});
-	});
-}
+  componentDidMount(){
+    this.checkOfficer();
+  }
+
+
+  checkOfficer(){
+    Api.getMe().then(data => {
+      this.setState({officer: data.teiSearchOrganisationUnits.length > 1});
+    });
+  }
+
 
   render() {
-  	if(this.state.officer === 100){
-  		return (
-  			<div></div>
-  		);
-  	}
-  	if(this.state.officer){
-  		return (
-     		<SearchBar/>
-    	);
-  	}else{
-  		return (
-  			<SearchBar />
-  		);
-  	}
+    if(this.state.officer === 100){
+      return (
+        <div></div>
+      );
+    }
+    if(this.state.officer){
+      return (
+        <SearchBar/>
+      );
+      
+    }else{
+      return (
+        <SearchBar />
+      );
+    }
 
   }
 }
