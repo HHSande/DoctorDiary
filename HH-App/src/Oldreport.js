@@ -176,6 +176,7 @@ class Oldreport extends React.Component{
         trackedEntityInstance: temp.trackedEntityInstance
       }
 
+
       fetch(`${baseUrl}events/${this.props.eventID}/note`, {
         method: 'POST',
         credentials: 'include',
@@ -199,6 +200,7 @@ class Oldreport extends React.Component{
     }
 
     temp.dataValues = test;
+
     if(!this.state.connectivity){
 
       var q = this.state.queue;
@@ -215,17 +217,20 @@ class Oldreport extends React.Component{
       return;
     }
 
-    fetch(`${baseUrl}events/${this.props.eventID}/${param}`, {
-      method: 'PUT',
-      credentials: 'include',
-      mode: 'cors',
-      headers,
-      body: JSON.stringify(temp),
-    })
-    .catch(error => error)
-    .then(response => response.json());
 
-    this.setState({jsonObject: temp});
+    if (!this.props.role){
+      fetch(`${baseUrl}events/${this.props.eventID}/${param}`, {
+        method: 'PUT',
+        credentials: 'include',
+        mode: 'cors',
+        headers,
+        body: JSON.stringify(temp),
+      })
+      .catch(error => error)
+      .then(response => response.json());
+
+      this.setState({jsonObject: temp});
+    }
   }
 
 
@@ -248,8 +253,9 @@ class Oldreport extends React.Component{
     if(this.props.role){
       return <div><Button className={this.props.classes.buttonapprove} onClick={() => this.saveChanges("zrZADVnTtMa", 1)}>Accept</Button>
       <Button className={this.props.classes.buttondecline} onClick={() => this.saveChanges("zrZADVnTtMa", 2)}>Reject</Button></div>
+
     }else{
-      return <div><Button className={this.props.classes.buttonpending} onClick={() => this.saveChanges("zrZADVnTtMa", 3)}>Done</Button></div>
+      return <div><Button className={this.props.classes.buttonpending} onClick={() => this.saveChanges("zrZADVnTtMa", 3)}>Save changes</Button></div>
     }
   }
 
@@ -386,7 +392,7 @@ class Oldreport extends React.Component{
             clearInterval(this.interval);
             this.props.handler();
           }
-        } color="primary"> Close </Button>
+        } color="primary">Close window</Button>
 
         </div>
         </Paper>
