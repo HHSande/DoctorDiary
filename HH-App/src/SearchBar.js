@@ -15,6 +15,17 @@ Lage en funksjon som generere en tr for navn og en for dato,
 disse skal kunne sorteres.
 **/
 
+
+/*
+	TODO:
+		CREATE NEW REPORT må ikke vises når du er DHO
+		Datoformatet må endres i listeview
+		Datoformatet må fikses i POST NEW REPORT
+		UNFINISHED kontra PENDING
+		Trigge en rerender når vi lukker rapport
+		Fiks dropdown i rapport
+*/
+
 const styles = theme => ({
 	root: {
 		width: '80%',
