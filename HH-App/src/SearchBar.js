@@ -16,7 +16,6 @@ Lage en funksjon som generere en tr for navn og en for dato,
 disse skal kunne sorteres.
 **/
 
-
 /*
 	TODO:
 		CREATE NEW REPORT må ikke vises når du er DHO
@@ -24,6 +23,7 @@ disse skal kunne sorteres.
 		Datoformatet må fikses i POST NEW REPORT
 		UNFINISHED kontra PENDING
 		Trigge en rerender når vi lukker rapport 			DONE!!!!		
+		UNFINISHED kontra PENDING
 		Fiks dropdown i rapport
 */
 
@@ -53,14 +53,17 @@ const styles = theme => ({
 		backgroundColor:'#E6E6FA',
 	},
 	buttonapprove: {
+		width: '100%',
 		margin: '1.25%' ,
 		backgroundColor:'#00ff00',
 	},
 	buttondecline: {
+		width: '100%',
 		margin: '1.25%' ,
 		backgroundColor: '#CD5C5C',
 	},
 	buttonpending: {
+		width: '100%',
 		margin: '1.25%' ,
 		backgroundColor:'#f4b042',
 	},
@@ -84,6 +87,7 @@ const styles = theme => ({
 	},
 
 });
+
 
 class SearchBar extends Component{
 	constructor(props){
@@ -123,8 +127,11 @@ class SearchBar extends Component{
 		this.getStatus = this.getStatus.bind(this);
 		this.checkStatus = this.checkStatus.bind(this);
 		this.pullReports = this.pullReports.bind(this);
+		this.getCreateReportButton = this.getCreateReportButton.bind(this);
+
 
 	}
+
 
 	createEntry(name, time){
 		return {doctor_name: name, logged:time};
@@ -215,6 +222,7 @@ class SearchBar extends Component{
 		}
 	}
 
+
 	sortByDate(){
 		var temp = this.state.curr;
 		var ny = temp.sort(function(a, b){
@@ -233,6 +241,7 @@ class SearchBar extends Component{
 			this.setState({curr: ny.reverse(), asc:false, dec:true});
 		}
 	}
+
 
 	checkConnectivity(){
 		if(!this.state.connectivity){
@@ -258,6 +267,7 @@ class SearchBar extends Component{
 
 	}
 
+
 	filterName(name){
 		//window.open("https://www.w3schools.com");
 		console.log(name);
@@ -265,6 +275,7 @@ class SearchBar extends Component{
 		this.filter(name.toLowerCase());
 		//this.toggleWindowPortal();
 	}
+
 
 	toggleWindowPortal() {
 
@@ -294,38 +305,19 @@ class SearchBar extends Component{
 			});
 		}
 
+
 	setInstanceAndEnrollment() {
-
-
-		console.log("Instance", this.state.instance, " // enrollment", this.state.enrollment);
-		var date = new Date();
-		var day = date.getDay();
-		var month = date.getMonth();
-		var year = date.getYear();
-
-
-		if(day<10) {
-			day = '0'+day
-		}
-
-		if(month<10) {
-			month = '0'+month
-		}
-
-		var date = year+"-"+month+"-"+day;
 
 		const event = {
 			dataValues: [],
 			enrollment: this.state.enrollment,
-			eventDate: "1995-09-27",
-			notes: [{value: "HELT NY RAPPORT POST2"}],
+			notes: [],
 			orgUnit: this.state.orgUnit,
-			program: "r6qGL4AmFV4", // Hardkoda men det e gucci
-			programStage: "ZJ9TrNgrtfb",  // Hardkoda men det e gucci
-			status: "ACTIVE", // Hardkoda men det e gucci
+			program: "r6qGL4AmFV4",
+			programStage: "ZJ9TrNgrtfb",
+			status: "ACTIVE",
 			trackedEntityInstance: this.state.instance
 		}
-
 
 		var eventID = "";
 		var baseUrl = Api.dhis2.baseUrl;
@@ -347,7 +339,7 @@ class SearchBar extends Component{
 
 			const newValues = {
 				dataValues: values,
-				notes: [{value: "yung renzel"}]
+				notes: []
 			}
 
 			fetch(`${baseUrl}events/${eventID}`, {
@@ -435,6 +427,12 @@ class SearchBar extends Component{
 		this.pullReports();
 	}
 
+	getCreateReportButton() {
+		if (!this.state.officer){
+			return <div><Button className={this.props.classes.buttonappbar} onClick={() => this.postNewReport()}>Create new report</Button></div>
+		}
+	}
+
 
 	render(){
 		const { classes } = this.props;
@@ -455,10 +453,7 @@ class SearchBar extends Component{
 			)
 		}
 
-		console.log(this.state.openReport);
-		if(/*this.state.curr.length > 0 && */ this.state.getObject === ""){
-			//console.log("Hei")
-			//console.log("Kjører");
+		if (this.state.getObject === ""){
 
 
 			this.listItems = this.state.curr.filter(this.lessThan7).map((fucker) =>
@@ -481,9 +476,6 @@ class SearchBar extends Component{
 			);
 		}
 
-
-		//console.log("Her skal være false: " + this.state.openWindow);
-
 		return(
 			<div>
 			<Paper className={classes.root}>
@@ -495,7 +487,7 @@ class SearchBar extends Component{
 			<TextField type="text" onChange={this.onChange.bind(this)} className={classes.searchbar} variant="filled" margin="normal" placeholder="Search by doctor"/>
 			<Button className={classes.buttonappbar} onClick={this.sortByName.bind(this)}>Sort by name</Button>
 			<Button className={classes.buttonappbar} onClick={this.sortByDate.bind(this)}>Sort by date</Button>
-			<Button className={classes.buttonappbar} onClick={() => this.postNewReport()}> Create new report </Button>
+			{this.getCreateReportButton()}
 			</Toolbar>
 			</AppBar>
 			<Table>
