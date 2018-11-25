@@ -5,11 +5,6 @@ import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 import Api from './api.js';
 
-/*
-getEvent(eventID){
-Api.getEntryFromDoctor(eventID).then(data => console.log(data));
-}
-*/
 
 /***********************************************************************
 VIKTIG
@@ -112,79 +107,7 @@ class Oldreport extends React.Component{
     console.log("Skal ikke være undefined - OLDREPORT", this.props.data);
     this.setState({jsonObject: JSON.parse(this.props.report), data: this.props.data, notes: JSON.parse(this.props.report).notes});
     console.log("A");
-    /*var json = JSON.parse(this.props.report);
-    var notes = json.notes;
-    console.log("NOTES");
-
-    for(var i = 0; i < notes.length; i++){
-    console.log(notes[i]);
-  }*/
-  //console.log("dataValues: ", dataValues);
-  //Mappe values
-  //var dataValues = this.state.data;
-  //for(var i = 0; i < this.state.length; i++){
-  /*
-  if(dataValues[i].dataElement === "zrZADVnTtMa"){
-  console.log(dataValues[i].value);
-  switch(parseInt(dataValues[i].value)){
-  case 1:
-  this.setValue("Approved", dataValues[i].dataElement);
-  break;
-  case 2:
-  this.setValue("Rejected" , dataValues[i].dataElement);
-  break;
-  case 3:
-  this.setValue("Pending", dataValues[i].dataElement);
-  break;
-  default:
-  console.log("Skal ikke kommme hit");
-  break;
 }
-}else if(dataValues[i].dataElement === "romAEndBlt4"){
-switch (parseInt(dataValues[i].value)) {
-case 1:
-this.setValue("Equiment/Drug Issues", dataValues[i].dataElement);
-break;
-case 2:
-this.setValue("User/Patient Issues", dataValues[i].dataElement);
-break;
-case 3:
-this.setValue("Technical Issue", dataValues[i].dataElement);
-break;
-case 4:
-this.setValue("Health worker issue", dataValues[i].dataElement);
-break;
-case 5:
-this.setValue("None", dataValues[i].dataElement);
-break;
-default:
-console.log("Skal ikke kommme hit");
-break;
-}
-}else if(dataValues[i].dataElement === "EZstOIjb7wN"){
-this.setValue("verdi1", dataValues[i].dataElement);
-
-}else if(dataValues[i].dataElement === "p5D5Y9x7yMc"){
-this.setValue("verdi2", dataValues[i].dataElement);
-}
-*/
-//}
-}
-
-//Må endre arrayet
-/*
-handlePatient(event)  {
-this.setState({ textField1: event.target.value });
-}
-
-handleEquipment(event) {
-this.setState({ textField2 : event.target.value });
-}
-
-handleProblems(event) {
-this.setState({ textField3: event.target.value});
-}
-*/
 
 checkConnectivity(){
   console.log("Sjekker nettet");
@@ -205,41 +128,17 @@ checkConnectivity(){
       alert("You've lost connection to the internet. You can still make changes to the journal entry, and it will be sent to the server once you've regained your internet connection");
       this.setState({connectivity: navigator.onLine});
     }
-
-
   }
-
-  /*
-  if(!this.state.connectivity){
-  console.log("Legger til i array grunnet ikke nett");
-  var temp = this.state.funcArray;
-  temp.push(this.add1);
-  this.setState({funcArray: temp});
 }
 
-if(this.state.connectivity && this.state.funcArray.length > 0){
-var copy = this.state.funcArray.length;
-for(var i = 0; i < copy; i++){
-console.log("Printer");
-console.log(copy.length);
-console.log(this.state.funcArray.pop()(i));
-}
-}
-
-if(this.state.connectivity !== navigator.onLine){
-console.log("Endrer connectivity");
-this.setState({connectivity: navigator.onLine});
-}
-*/
-}
 
 handleInput(event, id, numeric){
   //console.log("Kommer hit?");
   console.log("Ble kalt fra ", id);
 
   if (isNaN(event.target.value) && numeric){
-      event.target.value = null;
-      return;
+    event.target.value = null;
+    return;
   }
 
   var copy = this.state.data;
@@ -252,6 +151,7 @@ handleInput(event, id, numeric){
 handleNoteInput(event){
   this.setState({noteValue: event.target.value});
 }
+
 
 printArray(array){
   if(array === undefined){
@@ -332,14 +232,23 @@ saveChanges(param, textfield) {
 
   temp.dataValues = test;
   if(!this.state.connectivity){
-    /* var objToStore = {
-    eventId: this.props.eventID,
-    putInBody: temp,
 
-  }*/
-  var q = this.state.queue;
-  console.log("La til kall i queue");
-  q.push(() => {fetch(`${baseUrl}events/${this.props.eventID}/${param}`, {
+    var q = this.state.queue;
+    console.log("La til kall i queue");
+    q.push(() => {fetch(`${baseUrl}events/${this.props.eventID}/${param}`, {
+      method: 'PUT',
+      credentials: 'include',
+      mode: 'cors',
+      headers,
+      body: JSON.stringify(temp),
+    })
+    .catch(error => error)
+    .then(response => response.json())});
+    this.setState({queue: q});
+    return;
+  }
+
+  fetch(`${baseUrl}events/${this.props.eventID}/${param}`, {
     method: 'PUT',
     credentials: 'include',
     mode: 'cors',
@@ -347,26 +256,10 @@ saveChanges(param, textfield) {
     body: JSON.stringify(temp),
   })
   .catch(error => error)
-  .then(response => response.json())});
-  this.setState({queue: q});
-  return;
-}
+  .then(response => response.json());
 
-fetch(`${baseUrl}events/${this.props.eventID}/${param}`, {
-  method: 'PUT',
-  credentials: 'include',
-  mode: 'cors',
-  headers,
-  body: JSON.stringify(temp),
-})
-.catch(error => error)
-.then(response => response.json());
-
-console.log("BODY etter: ", temp);
-this.setState({jsonObject: temp});
-//console.log(temp.dataValues[0].dataElement);
-//console.log(this.state.textField1);
-//temp.dataValues[0].dataElement = this.state.textField1;
+  console.log("BODY etter: ", temp);
+  this.setState({jsonObject: temp});
 }
 
 focusIn(){
@@ -384,163 +277,162 @@ focusOut(param, textfield){
   this.setState({clicked: false});
 }
 
-/*
+
 postNewReport() {
 
-Api.getMe().then(data => {
-this.setState({ teiSearchOrganisationUnits: data.teiSearchOrganisationUnits[0].id,
-username: data.userCredentials.username});
-Api.getInstanceAndEnrollment(this.state.teiSearchOrganisationUnits).then(data => {
-this.setInstanceAndEnrollment(data.events);
-});
-});
-}*/
-generateButtons(){
-  if(this.props.role){
-    return <div><Button className={this.props.classes.buttonapprove} onClick={() => this.saveChanges("zrZADVnTtMa", 1)}>Accept</Button>
-    <Button className={this.props.classes.buttondecline} onClick={() => this.saveChanges("zrZADVnTtMa", 2)}>Reject</Button></div>
-  }else{
-    return <div><Button className={this.props.classes.buttonpending} onClick={() => this.saveChanges("zrZADVnTtMa", 3)}>Done</Button></div>
+  Api.getMe().then(data => {
+    this.setState({ teiSearchOrganisationUnits: data.teiSearchOrganisationUnits[0].id,
+      username: data.userCredentials.username});
+      Api.getInstanceAndEnrollment(this.state.teiSearchOrganisationUnits).then(data => {
+        this.setInstanceAndEnrollment(data.events);
+      });
+    });
   }
-}
-setInstanceAndEnrollment(reports) {
-  console.log("piss");
-  // FUNGERER IKKE HVIS HAN IKKE HAR RAPPORT FRA FØR
-  for (var i = 0; i < reports.length; i++){
-    if (reports[i].storedBy === this.state.username){
-      this.setState({ reports: reports, instance: reports[i].trackedEntityInstance,
-        enrollment: reports[i].enrollment });
-        break;
+
+
+  generateButtons(){
+    if(this.props.role){
+      return <div><Button className={this.props.classes.buttonapprove} onClick={() => this.saveChanges("zrZADVnTtMa", 1)}>Accept</Button>
+      <Button className={this.props.classes.buttondecline} onClick={() => this.saveChanges("zrZADVnTtMa", 2)}>Reject</Button></div>
+    }else{
+      return <div><Button className={this.props.classes.buttonpending} onClick={() => this.saveChanges("zrZADVnTtMa", 3)}>Done</Button></div>
+    }
+  }
+
+
+  setInstanceAndEnrollment(reports) {
+    console.log("piss");
+    // FUNGERER IKKE HVIS HAN IKKE HAR RAPPORT FRA FØR
+    for (var i = 0; i < reports.length; i++){
+      if (reports[i].storedBy === this.state.username){
+        this.setState({ reports: reports, instance: reports[i].trackedEntityInstance,
+          enrollment: reports[i].enrollment });
+          break;
+        }
       }
-    }
 
 
-    //  console.log("Instance", this.state.instance, " // enrollment", this.state.enrollment);
+      const event = {
+        dataValues: [],
+        enrollment: this.state.enrollment,
+        notes: [],
+        eventDate: "2018-11-22",
+        notes: [{value: "FUNKA DET?"}],
+        orgUnit: this.state.teiSearchOrganisationUnits,
+        program: "r6qGL4AmFV4", // Hardkoda men det e gucci
+        programStage: "ZJ9TrNgrtfb",  // Hardkoda men det e gucci
+        status: "ACTIVE", // Hardkoda men det e gucci
+        trackedEntityInstance: this.state.instance
+      }
 
-    const event = {
-      dataValues: [],
-      enrollment: this.state.enrollment,
-      notes: [],
-      eventDate: "2018-11-22",
-      notes: [{value: "FUNKA DET?"}],
-      orgUnit: this.state.teiSearchOrganisationUnits,
-      program: "r6qGL4AmFV4", // Hardkoda men det e gucci
-      programStage: "ZJ9TrNgrtfb",  // Hardkoda men det e gucci
-      status: "ACTIVE", // Hardkoda men det e gucci
-      trackedEntityInstance: this.state.instance
-    }
+      console.log(event);
 
-    console.log(event);
-
-    Api.postEvent(event).then(response => {
-      console.log("Driten e posta fam. Sjekk plass 0 i events som blir printa under");
-      this.getEvent();
-    });
-  };
+      Api.postEvent(event).then(response => {
+        console.log("Driten e posta fam. Sjekk plass 0 i events som blir printa under");
+        this.getEvent();
+      });
+    };
 
 
-  getEvent = () => {
-    Api.getEvent("program=r6qGL4AmFV4").then(data => {
-      console.warn("Alle rapporter", data);
-    });
-  };
+    getEvent = () => {
+      Api.getEvent("program=r6qGL4AmFV4").then(data => {
+        console.warn("Alle rapporter", data);
+      });
+    };
 
 
-  render(){
-    console.log("Kom hit først");
-    console.log("B");
+    render(){
+      console.log("Kom hit først");
+      console.log("B");
 
-    const { classes } = this.props;
-    /*if(this.state.data.length < 1){
-    return(
-    <div>
-    <p>Fitte</p>
-    </div>);
-  }*/
-  if (this.state.jsonObject === null) {
-    return <div>Tom</div>;
+      const { classes } = this.props;
+
+
+      if (this.state.jsonObject === null) {
+        return <div>Tom</div>;
+      }
+
+
+      return(
+        <div className="tReport">
+
+        <AppBar position="static" color="primary">
+        <Toolbar>
+        <Button color="inherit">Back</Button>
+        <Typography id="headliner" variant="h6" color="inherit">
+        Doctorsinterface
+        </Typography>
+        </Toolbar>
+        </AppBar>
+        <Paper className={classes.root}>
+        <form onSubmit={this.handleSubmit}>
+        <div>
+        <TextField type="text" onFocus={this.focusIn} onBlur={() => this.focusOut("zrZADVnTtMa", this.state.data[6])} value={this.state.data[6].value}  label="Approved/Rejcted Current Status:" className={classes.textinput} onChange={(event) => this.handleInput(event, 6, true)}/>
+        </div>
+        <div>
+        <TextField type="text" onFocus={this.focusIn} onBlur={() => this.focusOut("EZstOIjb7wN", this.state.data[2])} value={this.state.data[2].value} label="Anaesthesia provided to other cases:"className={classes.textinput} onChange={(event) => this.handleInput(event, 2, true)}/>
+        </div>
+        <div>
+        <TextField multiline={true} type="text" onFocus={this.focusIn} onBlur={() => this.focusOut("romAEndBlt4", this.state.data[5])} value={this.state.data[5].value} label="Challenges faced:"
+        className={classes.textinput} onChange={(event) => this.handleInput(event, 5, true)} rowsMax="7"/>
+        </div>
+        <div>
+        <Select
+        value={this.state.data[5].value}
+        onFocus={this.focusIn}
+        onBlur={() => this.focusOut("romAEndBlt4", this.state.data[5])}
+        onChange={(event) => this.handleInput(event, 5, true)}
+        displayEmpty
+        className={classes.textinput}
+        >
+        <MenuItem value="">
+        <em>None</em>
+        </MenuItem>
+        <MenuItem value={1}>One</MenuItem>
+        <MenuItem value={2}>Two</MenuItem>
+        <MenuItem value={3}>Three</MenuItem>
+        <MenuItem value={4}>Four</MenuItem>
+        <MenuItem value={5}>Five</MenuItem>
+        </Select>
+        </div>
+        <div>
+        <TextField type="text" onFocus={this.focusIn} onBlur={() => this.focusOut("CXL5mg5l0cv", this.state.data[1])} value={this.state.data[1].value} label="Number of Emergency Cesearean Cases (NIGHTTIME):"className={classes.textinput} onChange={(event) => this.handleInput(event, 1, true)}/>
+        </div>
+        <div>
+        <TextField type="text" onFocus={this.focusIn} onBlur={() => this.focusOut("BIB2zYDYIJp", this.state.data[0])} value={this.state.data[0].value} label="Number of Emergency Cesearean Cases (DAYTIME):"className={classes.textinput} onChange={(event) => this.handleInput(event, 0, true)}/>
+        </div>
+        <div>
+        <TextField multiline={true} type="text" onFocus={this.focusIn} onBlur={() => this.focusOut("LoY92GDoDC6", this.state.data[3])} value={this.state.data[3].value} label="Remarks on challenges faced:"
+        className={classes.textinput} onChange={(event) => this.handleInput(event, 3, false)} rowsMax="7"/>
+        </div>
+        <div>
+        <TextField multiline={true} type="text" onFocus={this.focusIn} onBlur={() => this.focusOut("p5D5Y9x7yMc", this.state.data[4])} value={this.state.data[4].value} label="Other remarks:"
+        className={classes.textinput} onChange={(event) => this.handleInput(event, 4, false)} rowsMax="7"/>
+        </div>
+        <div>
+        <TextField multiline={true} type="text"  value={this.printArray(this.state.notes)} label="Prev Notes"
+        className={classes.textinput}/>
+        </div>
+        <div>
+        <TextField multiline={true} type="text" onFocus={this.focusIn} onBlur={() => this.focusOut(7, null)} label="Notes:"
+        className={classes.textinput} onChange={(event) => this.handleNoteInput(event, 7)} rowsMax="7"/>
+        </div>
+
+        {this.generateButtons()}
+
+        </form>
+        <div>
+        <Button className={classes.buttons} onClick={() => {
+          clearInterval(this.interval);
+          this.props.handler();
+        }
+      } color="primary"> Close </Button>
+
+      </div>
+      </Paper>
+      </div>
+    );
   }
-  return(
-    <div className="tReport">
-
-    <AppBar position="static" color="primary">
-    <Toolbar>
-    <Button color="inherit">Back</Button>
-    <Typography id="headliner" variant="h6" color="inherit">
-    Doctorsinterface
-    </Typography>
-    </Toolbar>
-    </AppBar>
-    <Paper className={classes.root}>
-    <form onSubmit={this.handleSubmit}>
-    <div>
-    <TextField type="text" onFocus={this.focusIn} onBlur={() => this.focusOut("zrZADVnTtMa", this.state.data[6])} value={this.state.data[6].value}  label="Approved/Rejcted Current Status:" className={classes.textinput} onChange={(event) => this.handleInput(event, 6, true)}/>
-    </div>
-    <div>
-    <TextField type="text" onFocus={this.focusIn} onBlur={() => this.focusOut("EZstOIjb7wN", this.state.data[2])} value={this.state.data[2].value} label="Anaesthesia provided to other cases:"className={classes.textinput} onChange={(event) => this.handleInput(event, 2, true)}/>
-    </div>
-    <div>
-    <TextField multiline={true} type="text" onFocus={this.focusIn} onBlur={() => this.focusOut("romAEndBlt4", this.state.data[5])} value={this.state.data[5].value} label="Challenges faced:"
-    className={classes.textinput} onChange={(event) => this.handleInput(event, 5, true)} rowsMax="7"/>
-    </div>
-    <div>
-    <Select
-            value={this.state.data[5].value}
-            onFocus={this.focusIn}
-            onBlur={() => this.focusOut("romAEndBlt4", this.state.data[5])}
-            onChange={(event) => this.handleInput(event, 5, true)}
-            displayEmpty
-            className={classes.textinput}
-          >
-            <MenuItem value="">
-              <em>None</em>
-            </MenuItem>
-            <MenuItem value={1}>One</MenuItem>
-            <MenuItem value={2}>Two</MenuItem>
-            <MenuItem value={3}>Three</MenuItem>
-            <MenuItem value={4}>Four</MenuItem>
-            <MenuItem value={5}>Five</MenuItem>
-          </Select>
-    </div>
-    <div>
-    <TextField type="text" onFocus={this.focusIn} onBlur={() => this.focusOut("CXL5mg5l0cv", this.state.data[1])} value={this.state.data[1].value} label="Number of Emergency Cesearean Cases (NIGHTTIME):"className={classes.textinput} onChange={(event) => this.handleInput(event, 1, true)}/>
-    </div>
-    <div>
-    <TextField type="text" onFocus={this.focusIn} onBlur={() => this.focusOut("BIB2zYDYIJp", this.state.data[0])} value={this.state.data[0].value} label="Number of Emergency Cesearean Cases (DAYTIME):"className={classes.textinput} onChange={(event) => this.handleInput(event, 0, true)}/>
-    </div>
-    <div>
-    <TextField multiline={true} type="text" onFocus={this.focusIn} onBlur={() => this.focusOut("LoY92GDoDC6", this.state.data[3])} value={this.state.data[3].value} label="Remarks on challenges faced:"
-    className={classes.textinput} onChange={(event) => this.handleInput(event, 3, false)} rowsMax="7"/>
-    </div>
-    <div>
-    <TextField multiline={true} type="text" onFocus={this.focusIn} onBlur={() => this.focusOut("p5D5Y9x7yMc", this.state.data[4])} value={this.state.data[4].value} label="Other remarks:"
-    className={classes.textinput} onChange={(event) => this.handleInput(event, 4, false)} rowsMax="7"/>
-    </div>
-    <div>
-    <TextField multiline={true} type="text"  value={this.printArray(this.state.notes)} label="Prev Notes"
-    className={classes.textinput}/>
-    </div>
-    <div>
-    <TextField multiline={true} type="text" onFocus={this.focusIn} onBlur={() => this.focusOut(7, null)} label="Notes:"
-    className={classes.textinput} onChange={(event) => this.handleNoteInput(event, 7)} rowsMax="7"/>
-    </div>
-
-
-    {this.generateButtons()}
-
-    </form>
-    <div>
-    <Button className={classes.buttons} onClick={() => {
-      clearInterval(this.interval);
-      this.props.handler();
-    }
-  } color="primary"> Close </Button>
-
-    </div>
-    </Paper>
-    </div>
-  );
-}
 }
 
 export default withStyles(styles)(Oldreport);
