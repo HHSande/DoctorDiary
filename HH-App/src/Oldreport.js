@@ -374,10 +374,6 @@ postNewReport() {
         <Paper className={classes.root}>
         <form onSubmit={this.handleSubmit}>
         <div>
-        <br /><InputLabel className={classes.textinput}>Approved/Rejected Current Status</InputLabel>
-        <TextField type="text" onFocus={this.focusIn} onBlur={() => this.focusOut("zrZADVnTtMa", this.state.data[6])} value={this.state.data[6].value} className={classes.textinput} onChange={(event) => this.handleInput(event, 6, true)}/>
-        </div>
-        <div>
         <br /><InputLabel className={classes.textinput}>Anaesthesia provided to other cases</InputLabel>
         <TextField type="text" onFocus={this.focusIn} onBlur={() => this.focusOut("EZstOIjb7wN", this.state.data[2])} value={this.state.data[2].value} className={classes.textinput} onChange={(event) => this.handleInput(event, 2, true)}/>
         </div>
