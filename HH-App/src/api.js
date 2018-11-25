@@ -1,7 +1,7 @@
 // API CALLS
 
 
-var enc = "Basic " + window.btoa("CasperL"+":"+"District1-");
+var enc = "Basic " + window.btoa("AkselJ"+":"+"District1-");
 //var enc = "Basic " + window.btoa("BjarneB"+":"+"District1-");
 //var enc = "Basic " + window.btoa("admin"+":"+"district");
 

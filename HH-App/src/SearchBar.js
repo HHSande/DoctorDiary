@@ -18,12 +18,11 @@ disse skal kunne sorteres.
 
 /*
 	TODO:
-		CREATE NEW REPORT må ikke vises når du er DHO
+		CREATE NEW REPORT må ikke vises når du er DHO	DONE!!
 		Datoformatet må endres i listeview 					DONE!!!!
-		Datoformatet må fikses i POST NEW REPORT
+		Datoformatet må fikses i POST NEW REPORT	DONE!!
 		UNFINISHED kontra PENDING
-		Trigge en rerender når vi lukker rapport 			DONE!!!!		
-		UNFINISHED kontra PENDING
+		Trigge en rerender når vi lukker rapport 			DONE!!!!
 		Fiks dropdown i rapport
 */
 
@@ -85,7 +84,6 @@ const styles = theme => ({
 		textAlign: '-webkit-auto',
 
 	},
-
 });
 
 
@@ -96,7 +94,6 @@ class SearchBar extends Component{
 			textValue: "",
 			asc: false,
 			dec: false,
-			dummyData: [],
 			openWindow: false,
 			lestInn: false,
 			curr: [],
@@ -117,7 +114,6 @@ class SearchBar extends Component{
 		};
 
 		this.onChange = this.onChange.bind(this);
-		this.toggleWindowPortal = this.toggleWindowPortal.bind(this);
 		this.listItems = null;
 		this.getEvent = this.getEvent.bind(this);
 		this.lessThan7 = this.lessThan7.bind(this);
@@ -128,8 +124,6 @@ class SearchBar extends Component{
 		this.checkStatus = this.checkStatus.bind(this);
 		this.pullReports = this.pullReports.bind(this);
 		this.getCreateReportButton = this.getCreateReportButton.bind(this);
-
-
 	}
 
 
@@ -148,8 +142,8 @@ class SearchBar extends Component{
 		console.log("Skjedde");
 
 		this.pullReports();
-		
 	}
+	
 
 	pullReports(){
 		Api.getReports().then(data => {
@@ -172,12 +166,11 @@ class SearchBar extends Component{
 
 
 			}
-			console.log(data);
-			console.warn('REPORTS', data.events);
-			this.setState({dummyData : data.events, curr: data.events, loading: false});
-			console.log("RAPPORTER: ", this.state.dummyData);
+			this.setState({ curr: data.events, loading: false});
 		});
 	}
+
+
 	onChange(event){
 		var sum = [];
 		console.log("Hei sendt med", event.target.value);
@@ -187,19 +180,16 @@ class SearchBar extends Component{
 
 
 	filter(value){
-		console.log("Blir kalt?", value);
-		//console.log(value);
+
 		var sum = [];
-		for(var i = 0; i < this.state.dummyData.length; i++){
-			if(this.state.dummyData[i].storedBy.toLowerCase().startsWith(value)){
-				//console.log(this.state.dummyData[i].doctor_name + " hadde " + value);
-				console.log("Matched ", this.state.dummyData[i].storedBy.toLowerCase());
-				sum.push(this.state.dummyData[i]);
+		for(var i = 0; i < this.state.curr.length; i++){
+
+			if(this.state.curr[i].storedBy.toLowerCase().startsWith(value)){
+				sum.push(this.state.curr[i]);
 			}
 		}
-		console.log("Array med navn som matchet", sum);
-		this.setState({curr: sum});
 
+		this.setState({curr: sum});
 	}
 
 
@@ -217,6 +207,7 @@ class SearchBar extends Component{
 
 		if(!this.state.asc){
 			this.setState({curr: ny, asc: true, dec:false});
+
 		}else if(!this.state.dec){
 			this.setState({curr: ny.reverse(), asc:false, dec:true});
 		}
@@ -269,22 +260,9 @@ class SearchBar extends Component{
 
 
 	filterName(name){
-		//window.open("https://www.w3schools.com");
 		console.log(name);
 		document.getElementById("in").value = name;
 		this.filter(name.toLowerCase());
-		//this.toggleWindowPortal();
-	}
-
-
-	toggleWindowPortal() {
-
-		this.setState(state => ({
-			...state,
-			openWindow: true,
-		}), function(){
-			//console.log("Skal vel være true?: " + this.state.openWindow);
-		});
 	}
 
 
@@ -378,6 +356,7 @@ class SearchBar extends Component{
 		}
 	}
 
+
 	checkStatus(input){
 		console.log("Dette får vi fra approved section", input);
 		if(input === "1"){		//Approved
@@ -427,6 +406,7 @@ class SearchBar extends Component{
 		this.pullReports();
 	}
 
+
 	getCreateReportButton() {
 		if (!this.state.officer){
 			return <div><Button className={this.props.classes.buttonappbar} onClick={() => this.postNewReport()}>Create new report</Button></div>
@@ -435,6 +415,7 @@ class SearchBar extends Component{
 
 
 	render(){
+
 		const { classes } = this.props;
 
 		if (this.state.loading){
@@ -445,8 +426,8 @@ class SearchBar extends Component{
 		if (this.state.openReport){
 			console.log("Åpnet vindu");
 			console.log("REPORT:", this.state.report);
-			return (
 
+			return (
 				<NewWindow>
 				<Oldreport data={ this.state.report } handler = { this.closeWindow } eventID = { this.state.id } report = { this.state.getObject } role = {this.state.officer}/>
 				</NewWindow>
@@ -454,8 +435,6 @@ class SearchBar extends Component{
 		}
 
 		if (this.state.getObject === ""){
-
-
 			this.listItems = this.state.curr.filter(this.lessThan7).map((fucker) =>
 			<TableRow onClick={() =>
 				this.getEvent(fucker.event)}>
@@ -466,7 +445,6 @@ class SearchBar extends Component{
 			);
 		}
 
-
 		if(this.state.openWindow){
 			console.log("Vindu oppe");
 			return(
@@ -475,6 +453,7 @@ class SearchBar extends Component{
 				</Test>
 			);
 		}
+
 
 		return(
 			<div>
