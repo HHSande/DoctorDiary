@@ -355,7 +355,6 @@ postNewReport() {
 
       return(
         <div className="tReport">
-
         <AppBar position="static" color="primary">
         <Toolbar>
         <Button color="inherit">Back</Button>
@@ -386,7 +385,6 @@ postNewReport() {
         className={classes.textinput}
         >
         <MenuItem value="">
-        <em>None</em>
         </MenuItem>
         <MenuItem value={1}>One</MenuItem>
         <MenuItem value={2}>Two</MenuItem>
