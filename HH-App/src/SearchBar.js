@@ -7,6 +7,7 @@ import { TableCell, Table, TableHead, TableBody, TableRow, Paper, TextField, Inp
 import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 import DHOTable from './DHOTable.js'
+import logo from './loading.gif';
 /**
 Lagre doktorene i objekter, hvor de har en array av sine reports?
 Lage en objekt for reports, som har dato og content i seg?
@@ -19,10 +20,10 @@ disse skal kunne sorteres.
 /*
 	TODO:
 		CREATE NEW REPORT må ikke vises når du er DHO
-		Datoformatet må endres i listeview
+		Datoformatet må endres i listeview 					DONE!!!!
 		Datoformatet må fikses i POST NEW REPORT
 		UNFINISHED kontra PENDING
-		Trigge en rerender når vi lukker rapport
+		Trigge en rerender når vi lukker rapport 			DONE!!!!		
 		Fiks dropdown i rapport
 */
 
@@ -121,6 +122,7 @@ class SearchBar extends Component{
 		this.checkConnectivity = this.checkConnectivity.bind(this);
 		this.getStatus = this.getStatus.bind(this);
 		this.checkStatus = this.checkStatus.bind(this);
+		this.pullReports = this.pullReports.bind(this);
 
 	}
 
@@ -138,6 +140,11 @@ class SearchBar extends Component{
 		});
 		console.log("Skjedde");
 
+		this.pullReports();
+		
+	}
+
+	pullReports(){
 		Api.getReports().then(data => {
 			console.log("Dette er data", data);
 			//var tempArray = [];
@@ -145,6 +152,18 @@ class SearchBar extends Component{
 
 				//tempArray.push(this.sortDataValues(data.events[i].dataValues));
 				data.events[i].dataValues = this.sortDataValues(data.events[i].dataValues);
+				console.log(data.events[i].dueDate);
+				var tempStorage = data.events[i].dueDate.split("T");
+				console.log(tempStorage[0]);
+				console.log(tempStorage[1]);
+				var stykkOm = tempStorage[0].split("-");
+				var nyTid = stykkOm[2] + "-" + stykkOm[1] + "-" + stykkOm[0];
+				console.log(nyTid);
+				var rakker = tempStorage[1].split(".");
+				console.log("Tid som blir satt" + tempStorage[0] + " " + rakker[0]);
+				data.events[i].dueDate = nyTid + " " + rakker[0];
+
+
 			}
 			console.log(data);
 			console.warn('REPORTS', data.events);
@@ -152,8 +171,6 @@ class SearchBar extends Component{
 			console.log("RAPPORTER: ", this.state.dummyData);
 		});
 	}
-
-
 	onChange(event){
 		var sum = [];
 		console.log("Hei sendt med", event.target.value);
@@ -415,6 +432,7 @@ class SearchBar extends Component{
 
 	closeWindow() {
 		this.setState({openReport : false});
+		this.pullReports();
 	}
 
 
@@ -422,6 +440,7 @@ class SearchBar extends Component{
 		const { classes } = this.props;
 
 		if (this.state.loading){
+			return (<div><img src={logo} /></div>)
 			return (<div><h1><font color="white">Loading...</font></h1></div>)
 		}
 
