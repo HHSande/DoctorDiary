@@ -143,7 +143,7 @@ class SearchBar extends Component{
 
 		this.pullReports();
 	}
-	
+
 
 	pullReports(){
 		Api.getReports().then(data => {
@@ -342,7 +342,7 @@ class SearchBar extends Component{
 			for (var i = 0; i < 7; i++){
 				values[i] = {
 					"dataElement": this.state.dataValueIDs[i],
-					"value": 0,
+					"value": "0",
 				}
 			}
 
