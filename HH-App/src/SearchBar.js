@@ -128,7 +128,7 @@ class SearchBar extends Component{
 
 
 	createEntry(name, time){
-		return {doctor_name: name, logged:time};
+		return {storedBy: name, logged:time};
 	}
 
 
@@ -194,12 +194,18 @@ class SearchBar extends Component{
 
 
 	sortByName(){
-		var temp = this.state.curr;
+		var temp = this.state.curr.filter(this.lessThan7);
 		var ny = temp.sort(function(a, b){
-			if (a.doctor_name < b.doctor_name){
+			if(a.storedBy === undefined || b.storedBy === undefined){
+				//console.log(a.storedBy + " " + b.storedBy);
+				return 0;
+			}
+			if (a.storedBy.toLowerCase() < b.storedBy.toLowerCase()){
+				//console.log("B større " + a.storedBy + " " + b.storedBy);
 				return -1;
 			}
-			if (a.doctor_name > b.doctor_name){
+			if (a.storedBy.toLowerCase() > b.storedBy.toLowerCase()){
+				//console.log("A større " + a.storedBy + " " + b.storedBy);
 				return 1;
 			}
 			return 0;
@@ -213,14 +219,39 @@ class SearchBar extends Component{
 		}
 	}
 
+	sortByStatus(){
+		var temp = this.state.curr.filter(this.lessThan7);
+		var ny = temp.sort(function(a,b){
+			if(a.dataValues[6] === undefined || b.dataValues[6] === undefined){
+				console.log("Undefined " + a.dataValues[6] + " " + "med " + b.dataValues[6]);
+				return 0;
+			}
+
+			if(parseInt(a.dataValues[6].value) < parseInt(b.dataValues[6].value)){
+				console.log("A mindre " + a.dataValues[6].value + " " + "med " + b.dataValues[6].value);
+				return -1;
+			}else if(parseInt(a.dataValues[6].value) > parseInt(b.dataValues[6].value)){
+				console.log("A større " + a.dataValues[6].value + " " + "med " + b.dataValues[6].value);
+				return 1;
+			}
+			return 0;
+		});
+
+		if(!this.state.asc){
+			this.setState({curr: ny, asc: true, dec:false});
+		}else if(!this.state.dec){
+			this.setState({curr: ny.reverse(), asc:false, dec:true});
+		}
+	}
 
 	sortByDate(){
-		var temp = this.state.curr;
+		var temp = this.state.curr.filter(this.lessThan7);
 		var ny = temp.sort(function(a, b){
-			if (a.logged < b.logged){
+			console.log("A: " + a.dueDate + " " + "B: " + b.dueDate);
+			if (a.dueDate < b.dueDate){
 				return -1;
 			}
-			if (a.logged > b.logged){
+			if (a.dueDate > b.dueDate){
 				return 1;
 			}
 			return 0;
@@ -334,7 +365,7 @@ class SearchBar extends Component{
 
 
 	sortDataValues(array){
-		console.log("Dette får vi inn", array);
+		//console.log("Dette får vi inn", array);
 		if(array === undefined || !array.length === 7){
 			return array;
 
@@ -358,7 +389,7 @@ class SearchBar extends Component{
 
 
 	checkStatus(input){
-		console.log("Dette får vi fra approved section", input);
+		//console.log("Dette får vi fra approved section", input);
 		if(input === "1"){		//Approved
 			return this.props.classes.buttonapprove;
 
@@ -466,6 +497,7 @@ class SearchBar extends Component{
 			<TextField type="text" onChange={this.onChange.bind(this)} className={classes.searchbar} variant="filled" margin="normal" placeholder="Search by doctor"/>
 			<Button className={classes.buttonappbar} onClick={this.sortByName.bind(this)}>Sort by name</Button>
 			<Button className={classes.buttonappbar} onClick={this.sortByDate.bind(this)}>Sort by date</Button>
+			<Button className={classes.buttonappbar} onClick={this.sortByStatus.bind(this)}>Sort by status</Button>
 			{this.getCreateReportButton()}
 			</Toolbar>
 			</AppBar>
