@@ -156,20 +156,20 @@ class Oldreport extends React.Component{
 
     if(param === 7){
 
-      var fucker = [{value: this.state.noteValue}];
+      var item = [{value: this.state.noteValue}];
       if(temp.notes !== undefined){
         var temp = temp.notes;
         var nyArray = new Array(temp.length);
         for(var i = 0; i < temp.length; i++){
           nyArray[i] = temp[i];
         }
-        nyArray[temp.length] = fucker[0];
-        fucker = nyArray;
+        nyArray[temp.length] = item[0];
+        item = nyArray;
       }
 
       var jsonObject = {
         event: temp.event,
-        notes: fucker,
+        notes: item,
         orgUnit: temp.orgUnit,
         program: temp.program,
         programStage: temp.program,

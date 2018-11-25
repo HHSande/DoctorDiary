@@ -7,27 +7,27 @@
 //var enc = "Basic " + window.btoa("admin"+":"+"district"); //  ADMIN
 
 const dhis2 = {
-  baseUrl: 'https://course.dhis2.org/dhis/api/29/',
+  baseUrl: 'https://course.dhis2.org/dhis/api/30/',
 };
 
 
-/*const // headers = new // headers({
+const headers = new Headers({
   'Content-type' : 'application/json',
-  Authorization: enc,
+  //Authorization: enc,
   Accept: 'application/json',
 });
 
-const // headersForMe = new // headers({  // brukes for api/me, fordi Content-Type ikke funke for det
-  Authorization: enc,
+const headersForMe = new Headers({  // brukes for api/me, fordi Content-Type ikke funke for det
+  //Authorization: enc,
   Accept: 'application/json',
-});*/
+});
 
 const getTrackedEntityInstance = (orgUnit, username) => {
   return fetch(`${dhis2.baseUrl}trackedEntityInstances?ou=${orgUnit}&program=r6qGL4AmFV4&?filter=enrollments.storedBy:eq:${username}&fields=*`, {
     method: 'GET',
     mode: 'cors',
     credentials: 'include',
-    // headers,
+    headers,
   })
   .catch(error => error)
   .then(response => response.json());
@@ -35,38 +35,38 @@ const getTrackedEntityInstance = (orgUnit, username) => {
 
 const getMe = () => {
 
-//  var  headers =  headersForMe;
+  var  headers =  headersForMe;
 
   return fetch(`${dhis2.baseUrl}me`, {
     method: 'GET',
     mode: 'cors',
     credentials: 'include',
-    // headers,
+    headers,
   })
   .catch(error => error)
   .then(response => response.json());
 };
 
-const getInstanceAndEnrollment = hospital => { // for random requests
+const getInstanceAndEnrollment = hospital => {
 
   return fetch(`${dhis2.baseUrl}events?orgUnit=${hospital}`, {
     method: 'GET',
     mode: 'cors',
     credentials: 'include',
-    // headers,
+    headers,
   })
   .catch(error => error)
   .then(response => response.json());
 };
 
 
-const getReports = () => { // pass orgUnit
+const getReports = () => {
 
   return fetch(`${dhis2.baseUrl}events.json?program=r6qGL4AmFV4&paging=false`, {
     method: 'GET',
     mode: 'cors',
     credentials: 'include',
-    // headers,
+    headers,
   })
   .catch(error => error)
   .then(response => response.json());
@@ -80,7 +80,7 @@ const postEvent = event => {
     method: 'POST',
     credentials: 'include',
     mode: 'cors',
-    // headers,
+    headers,
     body: JSON.stringify(event),
   })
   .catch(error => error)
@@ -94,7 +94,7 @@ const getEntryFromDoctor = eventID => {
     method: 'GET',
     credentials: 'include',
     mode: 'cors',
-    // headers,
+    headers,
   })
   .catch(error => error)
   .then(response => response.json());
@@ -102,11 +102,11 @@ const getEntryFromDoctor = eventID => {
 
 const getEvent = event => {
 
-  return fetch(`${dhis2.baseUrl}events?program=r6qGL4AmFV4`, {  //  Search for data element
+  return fetch(`${dhis2.baseUrl}events?program=r6qGL4AmFV4`, {
     method: 'GET',
     mode: 'cors',
     credentials: 'include',
-    // headers,
+    headers,
   })
   .catch(error => error)
   .then(response => response.json());
@@ -119,7 +119,7 @@ export default {
   postEvent,
   getEntryFromDoctor,
   dhis2,
-  // headers,
+  headers,
   getMe,
   getInstanceAndEnrollment,
   getTrackedEntityInstance

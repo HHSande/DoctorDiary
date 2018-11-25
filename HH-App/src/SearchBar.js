@@ -376,12 +376,12 @@ class SearchBar extends Component{
 		}
 
 		if (this.state.getObject === ""){
-			this.listItems = this.state.modifiedReports.filter(this.lessThan7).map((fucker) =>
+			this.listItems = this.state.modifiedReports.filter(this.lessThan7).map((item) =>
 			<TableRow onClick={() =>
-				this.getEvent(fucker.event)}>
-				<TableCell className={classes.tablealign}>{fucker.storedBy}</TableCell>
-				<TableCell numeric>{fucker.dueDate}</TableCell>
-				<TableCell numeric><Button className={this.checkStatus(fucker.dataValues[6].value)}>{this.getStatus(fucker.dataValues[6].value)}</Button></TableCell>
+				this.getEvent(item.event)}>
+				<TableCell className={classes.tablealign}>{item.storedBy}</TableCell>
+				<TableCell numeric>{item.dueDate}</TableCell>
+				<TableCell numeric><Button className={this.checkStatus(item.dataValues[6].value)}>{this.getStatus(item.dataValues[6].value)}</Button></TableCell>
 				</TableRow>
 			);
 		}

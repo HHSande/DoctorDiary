@@ -1,0 +1,28 @@
+{
+    "version": "0.1",
+    "name": "Doctors diary Group12 Final",
+    "description": "Doctors diary from yours truly group 12",
+    "launch_path": "index.html",
+    "appType": "APP",
+    "icons": {
+        "16": "/img/icons/mortar-16.png",
+        "48": "/img/icons/mortar-48.png",
+        "128": "/img/icons/mortar-128.png"
+    },
+    "developer": {
+        "name": "Group 12",
+        "company": "UiO"
+    },
+    "default_locale": "en",
+    "activities": {
+        "dhis": {
+            "href": "*",
+            "namespace": "doctorsdiary-12-v4"
+        }
+    },
+    "authorities": [
+         "MY_APP_ADD_NEW",
+         "MY_APP_UPDATE",
+         "MY_APP_DELETE"
+    ]
+}
